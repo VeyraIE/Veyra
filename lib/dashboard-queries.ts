@@ -121,7 +121,7 @@ export async function getUserFavorites(userId: string): Promise<Activity[]> {
 
   // Drop rows whose activity was deleted after being favourited.
   return (data ?? [])
-    .map((row) => (row as { activity: Activity | null }).activity)
+    .map((row) => (row as unknown as { activity: Activity | null }).activity)
     .filter((activity): activity is Activity => activity !== null)
 }
 

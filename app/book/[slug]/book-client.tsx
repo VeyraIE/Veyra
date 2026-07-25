@@ -69,9 +69,9 @@ export default function BookClient({
 
     setPromoError(null)
     startPromoValidation(async () => {
-      const result = await validatePromoCode(code, basePrice)
-      if (result.valid) {
-        setPromoDiscount(result.discountAmount)
+      const result = await validatePromoCode(code, activity.id)
+      if (result.ok) {
+        setPromoDiscount(result.discount)
       } else {
         setPromoDiscount(0)
         setPromoError(result.error)
@@ -333,8 +333,8 @@ export default function BookClient({
                             value={participantAge}
                             onChange={(e) => setParticipantAge(e.target.value)}
                             placeholder="Enter age"
-                            min={activity.min_age}
-                            max={activity.max_age}
+                            min={activity.min_age ?? undefined}
+                            max={activity.max_age ?? undefined}
                             className="h-12"
                           />
                           <p className="text-xs text-muted-foreground mt-1">
