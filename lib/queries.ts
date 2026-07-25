@@ -205,6 +205,25 @@ export async function getActivityReviews(
   return (data ?? []) as unknown as Review[]
 }
 
+/** Approved reviews across every activity belonging to a provider. */
+export async function getProviderReviews(
+  providerId: string,
+): Promise<Review[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*, user:profiles(id, full_name, avatar_url)')
+    .eq('provider_id', providerId)
+    .eq('is_approved', true)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.log('[v0] getProviderReviews failed:', error.message)
+    return []
+  }
+  return (data ?? []) as unknown as Review[]
+}
+
 /** Upcoming, not-yet-full sessions for an activity, used by the booking flow. */
 export async function getUpcomingSessions(
   activityId: string,
@@ -226,4 +245,41 @@ export async function getUpcomingSessions(
     return []
   }
   return (data ?? []) as unknown as Session[]
+}
+
+/** A session flattened into the shape the booking UI renders. */
+export type BookableSession = {
+  id: string
+  date: string
+  day: string
+  time: string
+  spots: number
+}
+
+/**
+ * Upcoming sessions with remaining capacity, formatted for the booking flow.
+ * Sessions that are already full are excluded so users cannot select them.
+ */
+export async function getBookableSessions(
+  activityId: string,
+): Promise<BookableSession[]> {
+  const sessions = await getUpcomingSessions(activityId)
+
+  return sessions
+    .map((session) => {
+      const max = session.max_participants ?? 0
+      const current = session.current_participants ?? 0
+
+      return {
+        id: session.id,
+        date: session.date,
+        day: new Date(session.date).toLocaleDateString('en-IE', {
+          weekday: 'long',
+        }),
+        // Stored as `HH:MM:SS`; the UI only shows hours and minutes.
+        time: (session.start_time ?? '').slice(0, 5),
+        spots: Math.max(0, max - current),
+      }
+    })
+    .filter((session) => session.spots > 0)
 }
