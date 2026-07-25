@@ -11,7 +11,7 @@ import {
 import DashboardClient from './dashboard-client'
 
 export const metadata: Metadata = {
-  title: 'My Dashboard | Veyra',
+  title: 'My Dashboard',
   description:
     'Manage your bookings, child profiles, saved activities and account settings.',
 }

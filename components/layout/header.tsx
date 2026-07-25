@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { Menu, X, Search, Heart, User, Bell, ChevronDown } from 'lucide-react'
+import { Menu, X, Search, Heart, User, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/client'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,14 +15,20 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 
+type HeaderUser = {
+  id: string
+  email: string
+  full_name: string | null
+  avatar_url: string | null
+  role: 'user' | 'provider' | 'admin'
+}
+
 interface HeaderProps {
-  user?: {
-    id: string
-    email: string
-    full_name: string | null
-    avatar_url: string | null
-    role: 'user' | 'provider' | 'admin'
-  } | null
+  /**
+   * Optional server-resolved user. When omitted the header resolves the
+   * session itself, so it shows the signed-in state on every page.
+   */
+  user?: HeaderUser | null
 }
 
 const experienceCategories = [
@@ -33,11 +40,60 @@ const experienceCategories = [
   { label: 'Family', href: '/discover?category=family' },
 ]
 
-export function Header({ user }: HeaderProps) {
+export function Header({ user: userProp }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [sessionUser, setSessionUser] = useState<HeaderUser | null>(null)
   const pathname = usePathname()
+  const router = useRouter()
   const isHome = pathname === '/'
+
+  // Prefer a server-provided user; otherwise resolve the session here so the
+  // header reflects auth state on pages that don't pass it down.
+  const user = userProp ?? sessionUser
+  const shouldResolveSession = userProp === undefined
+
+  useEffect(() => {
+    if (!shouldResolveSession) return
+
+    const supabase = createClient()
+    let active = true
+
+    const loadProfile = async (authUser: { id: string; email?: string } | null) => {
+      if (!authUser) {
+        if (active) setSessionUser(null)
+        return
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, avatar_url, role')
+        .eq('id', authUser.id)
+        .maybeSingle()
+
+      if (!active) return
+      setSessionUser({
+        id: authUser.id,
+        email: authUser.email ?? '',
+        full_name: profile?.full_name ?? null,
+        avatar_url: profile?.avatar_url ?? null,
+        role: (profile?.role as HeaderUser['role']) ?? 'user',
+      })
+    }
+
+    supabase.auth.getUser().then(({ data }) => loadProfile(data.user))
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      loadProfile(session?.user ?? null)
+    })
+
+    return () => {
+      active = false
+      subscription.unsubscribe()
+    }
+  }, [shouldResolveSession])
 
   useEffect(() => {
     if (!isHome) return
@@ -48,6 +104,14 @@ export function Header({ user }: HeaderProps) {
   }, [isHome])
 
   const transparent = isHome && !scrolled && !mobileMenuOpen
+
+  const handleSignOut = async () => {
+    await createClient().auth.signOut()
+    setSessionUser(null)
+    setMobileMenuOpen(false)
+    router.push('/')
+    router.refresh()
+  }
 
   return (
     <header
@@ -120,16 +184,9 @@ export function Header({ user }: HeaderProps) {
           {user ? (
             <>
               <Button variant="ghost" size="icon" asChild>
-                <Link href="/dashboard/favorites">
+                <Link href="/dashboard">
                   <Heart className="h-5 w-5" />
-                  <span className="sr-only">Favorites</span>
-                </Link>
-              </Button>
-              <Button variant="ghost" size="icon" className="relative" asChild>
-                <Link href="/dashboard/notifications">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary" />
-                  <span className="sr-only">Notifications</span>
+                  <span className="sr-only">Saved activities</span>
                 </Link>
               </Button>
               <DropdownMenu>
@@ -155,14 +212,11 @@ export function Header({ user }: HeaderProps) {
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard">Dashboard</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/bookings">My Bookings</Link>
-                  </DropdownMenuItem>
                   {user.role === 'provider' && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href="/provider">Provider Dashboard</Link>
+                        <Link href="/provider/dashboard">Provider Dashboard</Link>
                       </DropdownMenuItem>
                     </>
                   )}
@@ -175,13 +229,11 @@ export function Header({ user }: HeaderProps) {
                     </>
                   )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/settings">Settings</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/auth/logout" className="text-destructive">
-                      Sign Out
-                    </Link>
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onSelect={handleSignOut}
+                  >
+                    Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -259,13 +311,22 @@ export function Header({ user }: HeaderProps) {
                 >
                   Dashboard
                 </Link>
-                <Link
-                  href="/auth/logout"
-                  className="block rounded-lg px-3 py-2 text-base font-medium text-destructive hover:bg-accent"
-                  onClick={() => setMobileMenuOpen(false)}
+                {user.role === 'provider' && (
+                  <Link
+                    href="/provider/dashboard"
+                    className="block rounded-lg px-3 py-2 text-base font-medium hover:bg-accent"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Provider Dashboard
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="block w-full rounded-lg px-3 py-2 text-left text-base font-medium text-destructive hover:bg-accent"
                 >
                   Sign Out
-                </Link>
+                </button>
               </>
             ) : (
               <div className="flex flex-col gap-2">
