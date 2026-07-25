@@ -43,7 +43,7 @@ export function ActivityCard({
   if (variant === 'horizontal') {
     return (
       <Link
-        href={`/activity/${activity.id}`}
+        href={`/activity/${activity.slug}`}
         className="group flex gap-4 rounded-2xl border bg-card p-3 transition-all hover:shadow-soft"
       >
         <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl">
@@ -79,7 +79,7 @@ export function ActivityCard({
   if (variant === 'compact') {
     return (
       <Link
-        href={`/activity/${activity.id}`}
+        href={`/activity/${activity.slug}`}
         className="group block rounded-2xl border bg-card transition-all hover:shadow-soft"
       >
         <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
@@ -110,7 +110,7 @@ export function ActivityCard({
   return (
     <div className="group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-soft-lg">
       {/* Image */}
-      <Link href={`/activity/${activity.id}`} className="block">
+      <Link href={`/activity/${activity.slug}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl">
           <img
             src={activity.cover_image || '/placeholder-activity.jpg'}
@@ -161,7 +161,7 @@ export function ActivityCard({
 
       {/* Content */}
       <div className="p-4">
-        <Link href={`/activity/${activity.id}`} className="block">
+        <Link href={`/activity/${activity.slug}`} className="block">
           {/* Category & Provider */}
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-primary">{activity.category?.name}</span>
