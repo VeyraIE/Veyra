@@ -1,38 +1,12 @@
-/** The 32 counties of Ireland, used for location filtering. */
-export const counties = [
-  'Antrim',
-  'Armagh',
-  'Carlow',
-  'Cavan',
-  'Clare',
-  'Cork',
-  'Derry',
-  'Donegal',
-  'Down',
-  'Dublin',
-  'Fermanagh',
-  'Galway',
-  'Kerry',
-  'Kildare',
-  'Kilkenny',
-  'Laois',
-  'Leitrim',
-  'Limerick',
-  'Longford',
-  'Louth',
-  'Mayo',
-  'Meath',
-  'Monaghan',
-  'Offaly',
-  'Roscommon',
-  'Sligo',
-  'Tipperary',
-  'Tyrone',
-  'Waterford',
-  'Westmeath',
-  'Wexford',
-  'Wicklow',
-] as const
+import { IRISH_COUNTIES } from '@/lib/types'
+
+/**
+ * Filter option lists for the discover and category pages.
+ *
+ * The county list is re-exported from `lib/types` rather than duplicated so
+ * there is a single source of truth for Irish counties.
+ */
+export const counties = IRISH_COUNTIES
 
 export const ageRanges = [
   { label: 'All Ages', value: 'all' },
