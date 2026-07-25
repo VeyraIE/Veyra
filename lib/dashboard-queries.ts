@@ -225,7 +225,7 @@ export function calculateProviderStats(
   )
 
   const totalRevenue = paidBookings.reduce(
-    (sum, b) => sum + Number(b.total_amount ?? 0),
+    (sum, b) => sum + Number(b.amount ?? 0),
     0,
   )
 
