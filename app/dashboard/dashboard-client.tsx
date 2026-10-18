@@ -276,7 +276,7 @@ export default function DashboardClient({
                           <div className="flex flex-col sm:flex-row">
                             <div className="sm:w-40 h-32 sm:h-auto relative bg-muted">
                               {booking.activity?.cover_image && (
-                                <Image
+                                <Image unoptimized
                                   src={booking.activity.cover_image}
                                   alt={booking.activity.title}
                                   fill
@@ -366,7 +366,7 @@ export default function DashboardClient({
                         <div className="flex items-center gap-4">
                           <div className="w-16 h-16 rounded-xl relative overflow-hidden shrink-0 bg-muted">
                             {booking.activity?.cover_image && (
-                              <Image
+                              <Image unoptimized
                                 src={booking.activity.cover_image}
                                 alt={booking.activity.title}
                                 fill
@@ -417,7 +417,7 @@ export default function DashboardClient({
                       <Card key={activity.id} className="overflow-hidden">
                         <Link href={`/activity/${activity.slug}`} className="block aspect-video relative bg-muted">
                           {activity.cover_image && (
-                            <Image
+                            <Image unoptimized
                               src={activity.cover_image}
                               alt={activity.title}
                               fill

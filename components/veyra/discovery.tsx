@@ -1,17 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowUpRight, Search, X } from 'lucide-react'
 import { PageShell } from './site-shell'
 import { ExperienceCard } from './experience-card'
 import { categories, experiences } from '@/lib/experience-edit'
 
-export function Discovery({ initialCategory = 'all', initialCounty = 'all', initialQuery = '' }: { initialCategory?: string; initialCounty?: string; initialQuery?: string }) {
-  const [category, setCategory] = useState(categories.some(item => item.slug === initialCategory) ? initialCategory : 'all')
+export function Discovery() {
+  const searchParams = useSearchParams()
+  const requestedCategory = searchParams.get('category') ?? 'all'
+  const category = categories.some(item => item.slug === requestedCategory) ? requestedCategory : 'all'
   const counties = [...new Set(experiences.map(item => item.county))].sort()
-  const [county, setCounty] = useState(counties.includes(initialCounty) ? initialCounty : 'all')
-  const [query, setQuery] = useState(initialQuery)
+  const requestedCounty = searchParams.get('county') ?? 'all'
+  const county = counties.includes(requestedCounty) ? requestedCounty : 'all'
+  const query = searchParams.get('q') ?? ''
   const results = experiences.filter(item => (category === 'all' || item.category === category) && (county === 'all' || item.county === county) && `${item.title} ${item.description} ${item.county} ${categories.find(entry => entry.slug === item.category)?.label}`.toLowerCase().includes(query.toLowerCase().trim()))
   function updateFilter(key: string, value: string) {
     const url = new URL(window.location.href)
@@ -19,7 +22,7 @@ export function Discovery({ initialCategory = 'all', initialCounty = 'all', init
     else url.searchParams.set(key, value)
     window.history.replaceState(null, '', url)
   }
-  function reset() { setCategory('all'); setCounty('all'); setQuery(''); window.history.replaceState(null, '', '/discover') }
+  function reset() { window.history.replaceState(null, '', '/discover') }
   return <PageShell>
     <section className="v-page-intro v-wrap">
     <span className="v-eyebrow">The Ireland edit</span>
@@ -33,15 +36,15 @@ export function Discovery({ initialCategory = 'all', initialCounty = 'all', init
     <label className="v-search">
     <Search size={19} />
     <span className="sr-only">Search experiences</span>
-    <input type="search" placeholder="What would you love to do?" value={query} onChange={event => { setQuery(event.target.value); updateFilter('q', event.target.value) }} />
+    <input type="search" placeholder="What would you love to do?" value={query} onChange={event => { updateFilter('q', event.target.value) }} />
     </label>
     <label className="v-county">
     <span>Where</span>
-    <select aria-label="Filter by county" value={county} onChange={event => { setCounty(event.target.value); updateFilter('county', event.target.value) }}>
+    <select aria-label="Filter by county" value={county} onChange={event => { updateFilter('county', event.target.value) }}>
     <option value="all">Anywhere in Ireland</option>{counties.map(item => <option key={item}>{item}</option>)}</select>
     </label>
     </div>
-    <div className="v-category-links" aria-label="Filter by category">{categories.map(item => <button aria-pressed={category === item.slug} key={item.slug} className={category === item.slug ? 'is-active' : ''} onClick={() => { setCategory(item.slug); updateFilter('category', item.slug) }}>{item.label}</button>)}</div>
+    <div className="v-category-links" aria-label="Filter by category">{categories.map(item => <button aria-pressed={category === item.slug} key={item.slug} className={category === item.slug ? 'is-active' : ''} onClick={() => { updateFilter('category', item.slug) }}>{item.label}</button>)}</div>
     <div className="v-results-meta">
     <span role="status">{results.length} {results.length === 1 ? 'experience' : 'experiences'} to inspire you</span>
     <button onClick={reset}>Reset filters <X size={13} />

@@ -332,7 +332,7 @@ export default function ProviderDashboardClient({
                       <div key={activity.id} className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-xl overflow-hidden relative shrink-0 bg-muted">
                           {activity.cover_image && (
-                            <Image
+                            <Image unoptimized
                               src={activity.cover_image}
                               alt={activity.title}
                               fill
@@ -388,7 +388,7 @@ export default function ProviderDashboardClient({
                   <Card key={activity.id} className="overflow-hidden">
                     <div className="aspect-video relative bg-muted">
                       {activity.cover_image && (
-                        <Image
+                        <Image unoptimized
                           src={activity.cover_image}
                           alt={activity.title}
                           fill

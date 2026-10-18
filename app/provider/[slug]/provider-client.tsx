@@ -53,7 +53,7 @@ export default function ProviderClient({
         {/* Cover Image */}
         <div className="relative h-48 md:h-64 lg:h-80 bg-gradient-to-br from-primary/20 to-accent/20">
           {provider.cover_image_url && (
-            <Image
+            <Image unoptimized
               src={provider.cover_image_url}
               alt={provider.business_name}
               fill
@@ -70,7 +70,7 @@ export default function ProviderClient({
               {/* Logo */}
               <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-2xl border-4 border-background bg-card shadow-lg overflow-hidden">
                 {provider.logo_url ? (
-                  <Image
+                  <Image unoptimized
                     src={provider.logo_url}
                     alt={provider.business_name}
                     fill
