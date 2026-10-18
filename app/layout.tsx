@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Geist_Mono, Fraunces } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import './globals.css'
 import './veyra.css'
@@ -89,6 +90,7 @@ export default function RootLayout({
             className: 'font-sans',
           }}
         />
+        {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )

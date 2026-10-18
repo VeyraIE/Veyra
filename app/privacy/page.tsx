@@ -15,6 +15,8 @@ export default function PrivacyPage() {
     <p>Share your name, reply address and the information we need to understand your request. Please avoid including payment details or sensitive personal information in an initial enquiry.</p>
     <h2>How we use it</h2>
     <p>Information you email to Veyra is used to respond to your request and discuss arrangements. Any details needed by a provider to deliver an experience should be agreed with you during that conversation. Enquiring does not sign you up to marketing.</p>
+    <h2>Site usage</h2>
+    <p>Deployed builds use Vercel Web Analytics to understand how the site is used. Please keep personal or sensitive information out of search queries and page URLs.</p>
     <h2>Questions or requests</h2>
     <p>Contact <a href="mailto:hello@veyra.ie">hello@veyra.ie</a> if you have a question about your enquiry or want to request access, correction or deletion of information you have shared.</p>
     </article>
