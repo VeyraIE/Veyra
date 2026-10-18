@@ -5,6 +5,6 @@ export const metadata: Metadata = { title: 'Discover the Ireland edit', descript
 
 export default async function DiscoverPage({ searchParams }: { searchParams: Promise<{ category?: string; county?: string; q?: string }> }) {
   const params = await searchParams
-  return <Discovery initialCategory={params.category} initialCounty={params.county} initialQuery={params.q} />
+  return <Discovery key={[params.category, params.county, params.q].join(':')} initialCategory={params.category} initialCounty={params.county} initialQuery={params.q} />
 }
 

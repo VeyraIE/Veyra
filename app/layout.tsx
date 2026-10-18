@@ -24,10 +24,10 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   title: {
-    default: 'VEYRA - Discover Ireland Beyond the Ordinary',
+    default: 'VEYRA — A life well experienced',
     template: '%s | VEYRA',
   },
-  description: 'Find and book experiences, wellness, sport, adventure and everything worth doing across Ireland — all in one seamless, premium platform.',
+  description: 'Discover Irish experiences, thoughtful escapes and personal concierge. Your time, beautifully spent.',
   keywords: ['experiences', 'Ireland', 'wellness', 'adventure', 'fitness', 'booking', 'lifestyle', 'sport', 'things to do', 'retreats'],
   authors: [{ name: 'VEYRA' }],
   creator: 'VEYRA',
@@ -36,8 +36,8 @@ export const metadata: Metadata = {
     locale: 'en_IE',
     url: 'https://veyra.ie',
     siteName: 'VEYRA',
-    title: 'VEYRA - Discover Ireland Beyond the Ordinary',
-    description: 'Find and book experiences, wellness, sport, adventure and everything worth doing across Ireland.',
+    title: 'VEYRA — A life well experienced',
+    description: 'Discover Irish experiences, thoughtful escapes and personal concierge. Your time, beautifully spent.',
     images: [
       {
         url: '/veyra/hero.png',
@@ -49,8 +49,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'VEYRA - Discover Ireland Beyond the Ordinary',
-    description: 'Find and book experiences, wellness, sport, adventure and everything worth doing across Ireland.',
+    title: 'VEYRA — A life well experienced',
+    description: 'Discover Irish experiences, thoughtful escapes and personal concierge. Your time, beautifully spent.',
     images: ['/veyra/hero.png'],
   },
   robots: {

@@ -4,6 +4,6 @@ export const metadata = { title: 'Start something good', description: 'Enquire a
 
 export default async function RequestPage({ searchParams }: { searchParams: Promise<{ type?: string; experience?: string; reference?: string }> }) {
   const params = await searchParams
-  return <RequestForm initialType={params.type} experienceSlug={params.experience} reference={params.reference} />
+  return <RequestForm key={[params.type, params.experience, params.reference].join(':')} initialType={params.type} experienceSlug={params.experience} reference={params.reference} />
 }
 
