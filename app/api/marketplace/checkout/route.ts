@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     if (error || !reservation) throw new Error(error?.message ?? 'Could not reserve this session.')
     const stripe = marketplaceStripe()
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment', ui_mode: 'embedded', payment_method_types: ['card'], redirect_on_completion: 'if_required',
+      mode: 'payment', ui_mode: 'embedded_page', payment_method_types: ['card'], redirect_on_completion: 'if_required',
       return_url: new URL('/book/confirmation?reservation=' + reservation.id, request.url).toString(),
       customer_email: reservation.customer_email,
       expires_at: Math.floor(Date.parse(reservation.expires_at) / 1000),

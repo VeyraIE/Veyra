@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import type { ComponentProps } from 'react'
 import { PageShell } from '@/components/veyra/site-shell'
 import { MarketplaceHeading, buttonClass } from '@/components/marketplace/presentation'
 import { ProviderPortal } from '@/components/marketplace/provider-portal'
@@ -14,8 +15,8 @@ export default async function ProviderDashboard() {
   if (!user.email_confirmed_at) return <PageShell><section className="mx-auto max-w-7xl px-4 py-16"><MarketplaceHeading eyebrow="Provider accounts" title="Verify your email first">Please use the verification link in your inbox before applying.</MarketplaceHeading></section></PageShell>
   let configured = true
   let provider = null
-  let offers = []
-  let bookings = []
+  let offers: ComponentProps<typeof ProviderPortal>['offers'] = []
+  let bookings: ComponentProps<typeof ProviderPortal>['bookings'] = []
   try {
     const database = marketplaceDatabase()
     const result = await database.from('veyra_marketplace_providers').select('id,business_name,approval_status,commission_bps,payments_ready,stripe_account_id').eq('user_id', user.id).maybeSingle()

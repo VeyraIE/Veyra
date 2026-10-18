@@ -15,7 +15,7 @@ export async function startSubscriptionCheckout(productId: string) {
   }
 
   const session = await stripe.checkout.sessions.create({
-    ui_mode: 'embedded',
+    ui_mode: 'embedded_page',
     redirect_on_completion: 'never',
     line_items: [
       {
@@ -47,7 +47,7 @@ export async function startBookingCheckout(bookingDetails: {
   sessionTime: string
   participantName: string
   priceInCents: number
-}) {
+}): Promise<string> {
   void bookingDetails
   throw new Error('Use the secure Veyra marketplace checkout for bookings.')
 }
