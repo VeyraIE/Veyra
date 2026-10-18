@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -21,6 +21,19 @@ import {
 } from "lucide-react"
 
 export default function SignUpPage() {
+  return <Suspense fallback={<div className="min-h-screen bg-background p-8 text-muted-foreground">Loading account signup…</div>}><SignUpForm /></Suspense>
+}
+
+function SignUpForm() {
+  const searchParams = useSearchParams()
+  const providerAccount = searchParams.get("type") === "provider"
+  const destination = providerAccount ? "/provider/dashboard" : "/account"
+  const loginLink = "/auth/login?redirect=" + encodeURIComponent(destination)
+  function callbackUrl() {
+    const callback = new URL(process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? window.location.origin + "/auth/callback")
+    callback.searchParams.set("next", destination)
+    return callback.toString()
+  }
   const router = useRouter()
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
@@ -40,7 +53,7 @@ export default function SignUpPage() {
       email,
       password,
       options: {
-        emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback?next=/provider/dashboard`,
+        emailRedirectTo: callbackUrl(),
         data: {
           full_name: fullName,
           role: "user"
@@ -63,7 +76,7 @@ export default function SignUpPage() {
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`
+        redirectTo: callbackUrl()
       }
     })
   }
@@ -80,7 +93,7 @@ export default function SignUpPage() {
             We&apos;ve sent a confirmation link to <strong>{email}</strong>. 
             Please click the link to verify your account.
           </p>
-          <Button variant="outline" onClick={() => router.push("/auth/login")}>
+          <Button variant="outline" onClick={() => router.push(loginLink)}>
             Back to Login
           </Button>
         </div>
@@ -100,11 +113,12 @@ export default function SignUpPage() {
             <span className="text-xl font-bold text-foreground">VEYRA</span>
           </Link>
 
-          <h1 className="text-3xl font-bold text-foreground mb-2">Create your account</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">{providerAccount ? "Create your provider account" : "Create your member account"}</h1>
           <p className="text-muted-foreground mb-8">
-            Join Veyra to discover activities for your family
+            {providerAccount ? "Verify your email, then apply to list your business. Approval is required before publishing." : "Create your free account, then subscribe for €4.99/month to unlock paid member benefits. No payment is taken on signup."}
           </p>
 
+          <div className="mb-6 grid grid-cols-2 gap-2" aria-label="Account type"><Link aria-current={!providerAccount ? "page" : undefined} className={"rounded-full border px-4 py-3 text-center text-sm " + (!providerAccount ? "border-primary text-primary" : "border-border text-muted-foreground")} href="/auth/sign-up?type=member">Member account</Link><Link aria-current={providerAccount ? "page" : undefined} className={"rounded-full border px-4 py-3 text-center text-sm " + (providerAccount ? "border-primary text-primary" : "border-border text-muted-foreground")} href="/auth/sign-up?type=provider">Provider account</Link></div>
           {/* OAuth Buttons */}
           <div className="space-y-3 mb-6">
             <Button 
@@ -210,7 +224,7 @@ export default function SignUpPage() {
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
                 <>
-                  Create Account
+                  {providerAccount ? "Create Provider Account" : "Create Member Account"}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </>
               )}
@@ -226,7 +240,7 @@ export default function SignUpPage() {
 
           <p className="text-center text-muted-foreground mt-6">
             Already have an account?{" "}
-            <Link href="/auth/login" className="text-primary font-medium hover:underline">
+            <Link href={loginLink} className="text-primary font-medium hover:underline">
               Sign in
             </Link>
           </p>
@@ -238,15 +252,10 @@ export default function SignUpPage() {
         <div className="max-w-md text-center text-primary-foreground">
           <h2 className="text-4xl font-bold mb-6">Start your journey today</h2>
           <p className="text-lg opacity-90 mb-8">
-            Create your provider account, verify your email and apply to join Veyra. Guests can book without an account.
+            {providerAccount ? "Create your provider account, verify your email and apply to join Veyra. Guests can book without an account." : "Member benefits, participating experience discounts and partner venue offers — €4.99 per month once you subscribe."}
           </p>
           <div className="space-y-4 text-left">
-            {[
-              "Apply to join our Ireland provider community",
-              "Add services after your account is approved",
-              "Set your own prices and available sessions",
-              "Receive payments through your connected Stripe account"
-            ].map((feature, idx) => (
+            {(providerAccount ? ["Apply to join our Ireland provider community", "Add services after approval", "Set your own prices and sessions", "Connect Stripe to receive payouts"] : ["Member-only benefits", "Discounts on participating experiences", "Partner venue offers", "€4.99/month · manage cancellation in your account"]).map((feature, idx) => (
               <div key={idx} className="flex items-center gap-3">
                 <div className="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                   <CheckCircle2 className="h-4 w-4" />

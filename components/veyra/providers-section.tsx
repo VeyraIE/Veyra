@@ -29,8 +29,8 @@ export function ProvidersSection() {
           </p>
           <div className="mt-9">
             <Button asChild size="lg" className="h-13 rounded-full px-8 text-base font-semibold">
-              <Link href="/provider/onboarding">
-                Become a Provider
+              <Link href="/auth/sign-up?type=provider">
+                Create Provider Account
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>

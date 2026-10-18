@@ -11,7 +11,9 @@ import { cn } from '@/lib/utils'
 const navigation = [
   { href: '/discover', label: 'Discover' },
   { href: '/concierge', label: 'Concierge' },
-  { href: '/partners', label: 'For Partners' },
+  { href: '/providers', label: 'For Providers' },
+  { href: '/membership', label: 'Membership · €4.99' },
+  { href: '/partners', label: 'Partners' },
 ]
 
 const categoryLinks = [
@@ -49,7 +51,7 @@ export function Header(_props: { user?: unknown }) {
         <Link href="/" aria-label="Veyra home" className="flex items-center gap-2">
           <span className="font-sans text-xl font-bold tracking-[0.25em] text-foreground">VEYRA</span>
         </Link>
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-1 xl:flex">
           <Link href="/discover" className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground" aria-current={pathname === '/discover' ? 'page' : undefined}>Discover</Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -65,17 +67,20 @@ export function Header(_props: { user?: unknown }) {
           </DropdownMenu>
           {navigation.slice(1).map(link => <Link key={link.href} href={link.href} aria-current={pathname === link.href ? 'page' : undefined} className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground">{link.label}</Link>)}
         </div>
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 xl:flex">
+          <Button variant="ghost" asChild><Link href="/auth/login?redirect=/account">Sign in</Link></Button>
           <Button variant="ghost" size="icon" asChild><Link href="/discover" aria-label="Search experiences"><Search className="h-5 w-5" /></Link></Button>
           <Button asChild className="rounded-full"><Link href="/book">Book an Experience</Link></Button>
         </div>
-        <Button variant="ghost" size="icon" className="md:hidden" aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <Link href="/membership" className="ml-auto rounded-full bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground xl:hidden">Join · €4.99/mo</Link>
+        <Button variant="ghost" size="icon" className="xl:hidden" aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
       </nav>
       {mobileMenuOpen && (
-        <nav id="mobile-navigation" aria-label="Mobile navigation" className="space-y-1 border-t border-border bg-background px-4 py-4 md:hidden">
+        <nav id="mobile-navigation" aria-label="Mobile navigation" className="space-y-1 border-t border-border bg-background px-4 py-4 xl:hidden">
           {navigation.map(link => <Link key={link.href} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block rounded-lg px-3 py-3 text-sm text-muted-foreground hover:bg-muted hover:text-foreground">{link.label}</Link>)}
+          <div className="flex flex-wrap gap-2 py-3"><Link href="/auth/sign-up?type=provider" onClick={() => setMobileMenuOpen(false)} className="rounded-full border border-primary/40 px-4 py-2 text-sm text-primary">Create provider account</Link><Link href="/auth/login?redirect=/account" onClick={() => setMobileMenuOpen(false)} className="rounded-full border border-border px-4 py-2 text-sm">Member sign in</Link></div>
           <div className="grid grid-cols-3 gap-2 py-3">
             {categoryLinks.map(category => <Link key={category.label} href={'/discover?category=' + category.category} onClick={() => setMobileMenuOpen(false)} className="rounded-full border border-border px-3 py-2 text-center text-xs">{category.label}</Link>)}
           </div>
@@ -103,7 +108,7 @@ export function Footer() {
           <div>
             <p className="text-sm font-semibold text-foreground">For Partners</p>
             <ul className="mt-4 space-y-3">
-              <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/provider/onboarding">Become a Provider</Link></li>
+              <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/auth/sign-up?type=provider">Create Provider Account</Link></li>
               <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/request?type=hotel">For Hotels & Stays</Link></li>
               <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/provider/dashboard">Provider Dashboard</Link></li>
             </ul>
@@ -111,13 +116,15 @@ export function Footer() {
           <div>
             <p className="text-sm font-semibold text-foreground">VEYRA</p>
             <ul className="mt-4 space-y-3">
+              <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/membership">Membership · €4.99/month</Link></li>
+              <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/account">Member Account</Link></li>
               <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/concierge">Personal Concierge</Link></li>
               <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/request">Contact Us</Link></li>
               <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/privacy">Privacy</Link></li>
             </ul>
           </div>
         </div>
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 xl:flex-row">
           <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} VEYRA. All rights reserved.</p>
           <span className="text-sm text-muted-foreground">Launching in Ireland. No app required.</span>
         </div>

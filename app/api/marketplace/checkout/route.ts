@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { checkoutSchema } from '@/lib/marketplace/validation'
+import { bookingMember } from '@/lib/membership/server'
 import { assertSameOrigin, guestCookie, hashAddress, marketplaceDatabase, marketplaceStripe, paymentsConfigured, publicMarketplaceError, refreshProviderPayments, visitorIdentity } from '@/lib/marketplace/server'
 
 export const runtime = 'nodejs'
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await database.rpc('veyra_marketplace_reserve', {
       p_offer_id: input.offerId, p_slot_id: input.slotId, p_request_key: input.requestKey,
       p_visitor_hash: visitor.hash, p_ip_hash: hashAddress(request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown'),
-      p_guests: input.guests, p_name: input.name, p_email: input.email,
+      p_guests: input.guests, p_name: input.name, p_email: input.email, p_member_user_id: await bookingMember(),
     })
     const reservation = Array.isArray(data) ? data[0] : data
     if (error || !reservation) throw new Error(error?.message ?? 'Could not reserve this session.')

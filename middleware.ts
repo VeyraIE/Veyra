@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
     }
     return response
   }
-  const publicPages = ['/', '/discover', '/concierge', '/partners', '/request', '/privacy', '/about', '/pricing']
+  const publicPages = ['/', '/discover', '/concierge', '/partners', '/request', '/privacy', '/about', '/pricing', '/providers', '/membership']
   if (publicPages.includes(pathname) || pathname.startsWith('/experiences/') || pathname.startsWith('/book/') || pathname === '/provider/onboarding') {
     return NextResponse.next()
   }

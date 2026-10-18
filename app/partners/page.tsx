@@ -26,7 +26,7 @@ export default function PartnersPage() {
     <p>From independent studios to outdoor guides and creative hosts, we’re looking for people who care about what they do.</p>
     <ul>{['Add services, prices and sessions after approval', 'Customers book and pay directly on Veyra', 'Agreed commission deducted before your payout'].map(item => <li key={item}>
     <Check size={16} />{item}</li>)}</ul>
-    <Link href="/provider/onboarding" className="v-button">Become a provider partner <ArrowUpRight size={17} />
+    <Link href="/auth/sign-up?type=provider" className="v-button">Create a provider account <ArrowUpRight size={17} />
     </Link>
     </div>
     </article>

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { PageShell } from '@/components/veyra/site-shell'
 import { MarketplaceHeading } from '@/components/marketplace/presentation'
 import { AdminPanel } from '@/components/marketplace/admin-panel'
@@ -16,5 +17,5 @@ export default async function MarketplaceAdmin() {
     database.from('veyra_marketplace_reservations').select('id,title,status,customer_name,customer_email,total_amount,application_fee,starts_at').order('created_at', { ascending: false }).limit(200),
   ])
   if (providers.error || bookings.error) return <PageShell><section className="mx-auto max-w-4xl px-4 py-16"><MarketplaceHeading eyebrow="Veyra administration" title="Could not load marketplace records">Please check the marketplace database setup and retry.</MarketplaceHeading></section></PageShell>
-  return <PageShell><section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"><MarketplaceHeading eyebrow="Veyra administration" title="Marketplace management">Approve providers, agree commission, and manage verified booking payments.</MarketplaceHeading><AdminPanel providers={providers.data ?? []} bookings={bookings.data ?? []} paymentSetup={paymentsConfigured()} /></section></PageShell>
+  return <PageShell><section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"><MarketplaceHeading eyebrow="Veyra administration" title="Marketplace management">Approve providers, agree commission, and manage verified booking payments.</MarketplaceHeading><Link className="mb-8 inline-block rounded-full border border-border px-6 py-3 text-sm text-primary" href="/admin/membership">Manage member benefits & venue offers →</Link><AdminPanel providers={providers.data ?? []} bookings={bookings.data ?? []} paymentSetup={paymentsConfigured()} /></section></PageShell>
 }

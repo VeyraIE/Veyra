@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { authDestination } from "@/lib/auth-destination"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -44,15 +45,17 @@ export default function LoginPage() {
     }
 
     const requested = new URLSearchParams(window.location.search).get("redirect")
-    router.push(["/provider/dashboard", "/provider/onboarding", "/admin/marketplace", "/dashboard"].includes(requested ?? "") ? requested! : "/provider/dashboard")
+    router.push(authDestination(requested))
   }
 
   const handleOAuthLogin = async (provider: "google" | "apple") => {
     const supabase = createClient()
+    const callback = new URL(process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`)
+    callback.searchParams.set("next", authDestination(new URLSearchParams(window.location.search).get("redirect")))
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback?next=/provider/dashboard`
+        redirectTo: callback.toString()
       }
     })
   }
@@ -173,14 +176,14 @@ export default function LoginPage() {
 
           <p className="text-center text-muted-foreground mt-6">
             Don&apos;t have an account?{" "}
-            <Link href="/auth/sign-up" className="text-primary font-medium hover:underline">
+            <Link href="/auth/sign-up?type=member" className="text-primary font-medium hover:underline">
               Sign up
             </Link>
           </p>
 
           <p className="text-center text-muted-foreground mt-4">
-            <Link href="/provider/onboarding" className="text-primary font-medium hover:underline">
-              Register as an activity provider
+            <Link href="/providers" className="text-primary font-medium hover:underline">
+              Create a provider account
             </Link>
           </p>
         </div>
@@ -191,7 +194,7 @@ export default function LoginPage() {
         <div className="max-w-md text-center text-primary-foreground">
           <h2 className="text-4xl font-bold mb-6">Extraordinary experiences start here</h2>
           <p className="text-lg opacity-90 mb-8">
-            Apply as a provider, publish your services after approval, and connect with people discovering Ireland.
+            Discover experiences, join Veyra Membership for €4.99 a month, or manage your approved provider business.
           </p>
           <div className="grid grid-cols-3 gap-4">
             {["Discover", "Create", "Connect"].map((stat, idx) => (

@@ -1,5 +1,6 @@
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
+import { AccountEntry } from '@/components/membership/account-entry'
 import { Hero } from '@/components/veyra/hero'
 import { DiscoveryGrid } from '@/components/veyra/discovery-grid'
 import { ProblemSection } from '@/components/veyra/problem-section'
@@ -16,6 +17,7 @@ export default function HomePage() {
 
       <main id="main" className="flex-1">
         <Hero />
+        <AccountEntry />
         <DiscoveryGrid />
         <ProblemSection />
         <FeaturedExperiences />

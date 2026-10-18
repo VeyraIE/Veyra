@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { marketplaceDatabase, marketplaceStripe, synchronizePayment } from '@/lib/marketplace/server'
+import { reconcileMembershipCheckout, synchronizeMembership } from '@/lib/membership/server'
 
 export const runtime = 'nodejs'
 
@@ -16,7 +17,17 @@ export async function POST(request: Request) {
   try {
     const stripe = marketplaceStripe()
     if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded' || event.type === 'checkout.session.expired') {
-      await synchronizePayment(await stripe.checkout.sessions.retrieve(event.data.object.id))
+      const session = await stripe.checkout.sessions.retrieve(event.data.object.id)
+      await synchronizePayment(session)
+      await reconcileMembershipCheckout(session)
+    }
+    if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
+      await synchronizeMembership(event.data.object.id)
+    }
+    if (event.type === 'invoice.paid' || event.type === 'invoice.payment_failed' || event.type === 'invoice.payment_action_required') {
+      const subscription = event.data.object.parent?.subscription_details?.subscription
+      const id = typeof subscription === 'string' ? subscription : subscription?.id
+      if (id) await synchronizeMembership(id)
     }
     if (event.type === 'refund.updated' || event.type === 'refund.created' || event.type === 'refund.failed') {
       const refund = await stripe.refunds.retrieve(event.data.object.id)

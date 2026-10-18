@@ -1,42 +1,10 @@
 'use server'
 
 import { stripe } from '@/lib/stripe'
-import { getProductById, SUBSCRIPTION_PRODUCTS } from '@/lib/products'
 
-// Start a checkout session for provider subscriptions
-export async function startSubscriptionCheckout(productId: string) {
-  const product = getProductById(productId)
-  if (!product) {
-    throw new Error(`Product with id "${productId}" not found`)
-  }
-
-  if (product.type !== 'subscription') {
-    throw new Error('This product is not a subscription')
-  }
-
-  const session = await stripe.checkout.sessions.create({
-    ui_mode: 'embedded_page',
-    redirect_on_completion: 'never',
-    line_items: [
-      {
-        price_data: {
-          currency: 'eur',
-          product_data: {
-            name: product.name,
-            description: product.description,
-          },
-          unit_amount: product.priceInCents,
-          recurring: product.interval ? {
-            interval: product.interval,
-          } : undefined,
-        },
-        quantity: 1,
-      },
-    ],
-    mode: 'subscription',
-  })
-
-  return session.client_secret
+export async function startSubscriptionCheckout(productId: string): Promise<string> {
+  void productId
+  throw new Error('Sign in to your Veyra account to subscribe securely.')
 }
 
 // Start a checkout session for activity booking
