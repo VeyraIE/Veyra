@@ -24,7 +24,9 @@ export function marketplaceStripe() {
 export function paymentsConfigured() {
   const secret = process.env.STRIPE_SECRET_KEY ?? ''
   const publishable = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ''
-  const validMode = process.env.VERCEL_ENV === 'production' || (/^(sk|rk)_test_/.test(secret) && publishable.startsWith('pk_test_'))
+  const validMode = process.env.VERCEL_ENV === 'production'
+    ? /^(sk|rk)_live_/.test(secret) && publishable.startsWith('pk_live_')
+    : /^(sk|rk)_test_/.test(secret) && publishable.startsWith('pk_test_')
   return Boolean(validMode && secret && publishable && process.env.STRIPE_WEBHOOK_SECRET && process.env.SUPABASE_SERVICE_ROLE_KEY)
 }
 

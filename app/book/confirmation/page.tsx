@@ -6,6 +6,7 @@ import { marketplaceStripe, ownedReservation, synchronizePayment } from '@/lib/m
 import { formatMoney, formatSession } from '@/lib/marketplace/validation'
 
 export const dynamic = 'force-dynamic'
+export const metadata = { title: 'Your booking', robots: { index: false, follow: false } }
 
 export default async function BookingConfirmation({ searchParams }: { searchParams: Promise<{ reservation?: string }> }) {
   const { reservation: id } = await searchParams

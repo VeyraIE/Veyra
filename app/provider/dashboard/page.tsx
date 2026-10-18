@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 import { marketplaceDatabase } from '@/lib/marketplace/server'
 
 export const dynamic = 'force-dynamic'
+export const metadata = { title: 'Provider dashboard', robots: { index: false, follow: false } }
 
 export default async function ProviderDashboard() {
   const client = await createClient()

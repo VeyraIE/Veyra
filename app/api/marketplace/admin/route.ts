@@ -9,8 +9,9 @@ export async function POST(request: Request) {
     const body = await request.json()
     const database = marketplaceDatabase()
     if (body.action === 'review-provider') {
-      const input = z.object({ providerId: z.string().uuid(), approved: z.boolean(), commissionPercent: z.coerce.number().min(0).max(99).multipleOf(0.01) }).parse(body)
-      const { error } = await database.from('veyra_marketplace_providers').update({ approval_status: input.approved ? 'approved' : 'rejected', commission_bps: Math.round(input.commissionPercent * 100), approved_by: administrator.id }).eq('id', input.providerId)
+      const input = z.object({ providerId: z.string().uuid(), approved: z.boolean() }).parse(body)
+      const percentage = input.approved ? z.union([z.number(), z.string().trim().regex(/^\d{1,2}(\.\d{1,2})?$/).transform(Number)]).pipe(z.number().min(0).max(99).multipleOf(0.01)).parse(body.commissionPercent) : null
+      const { error } = await database.from('veyra_marketplace_providers').update({ approval_status: input.approved ? 'approved' : 'rejected', ...(percentage === null ? {} : { commission_bps: Math.round(percentage * 100) }), approved_by: administrator.id }).eq('id', input.providerId)
       if (error) throw new Error('Could not update this provider.')
       return NextResponse.json({ ok: true })
     }

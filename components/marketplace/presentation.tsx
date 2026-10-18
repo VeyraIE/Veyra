@@ -7,7 +7,7 @@ export const buttonClass = 'inline-flex min-h-11 items-center justify-center rou
 export const secondaryClass = 'inline-flex min-h-11 items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-medium hover:border-primary disabled:opacity-50'
 
 export function MarketplaceHeading({ eyebrow, title, children }: { eyebrow: string; title: string; children?: React.ReactNode }) {
-  return <div className="mb-10 max-w-3xl"><p className="mb-3 text-sm font-semibold uppercase tracking-widest text-primary">{eyebrow}</p><h1 className="text-3xl font-bold tracking-tight sm:text-5xl">{title}</h1>{children && <div className="mt-5 text-muted-foreground">{children}</div>}</div>
+  return <div className="mb-10 max-w-3xl"><span className="mb-3 block text-sm font-semibold uppercase tracking-widest text-primary">{eyebrow}</span><h1 className="font-bold tracking-tight" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', overflowWrap: 'anywhere' }}>{title}</h1>{children && <div className="mt-5 text-muted-foreground">{children}</div>}</div>
 }
 
 export function BookableCard({ offer }: { offer: BookableOffer }) {

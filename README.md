@@ -1,6 +1,6 @@
 # Veyra · Ireland launch
 
-Next.js website for discovering Irish experiences and arranging them with a personal concierge. The launch uses a manual email enquiry workflow, with no account or app required.
+Next.js website for discovering Irish experiences and arranging them with a personal concierge. Approved providers manage their own services, prices and sessions. Customers book and pay on-site through Stripe Connect, without an account or app. Concierge and hotel enquiries retain the manual email workflow.
 
 ## Development
 
@@ -19,7 +19,11 @@ Vercel runs the launch TypeScript check before the production build. The launch 
 
 - `/` — the Ireland edit and brand introduction
 - `/discover` — category, county and text filters, reflected in the URL
-- `/experiences/[slug]` — experience inspiration and enquiry
+- `/experiences/[slug]` — live provider service details, or clearly labelled editorial inspiration
+- `/book` and `/book/[slug]` — published services and secure guest checkout
+- `/book/confirmation` — private guest confirmation after Stripe verification
+- `/provider/dashboard` — applications, payment onboarding, service/session management and bookings
+- `/admin/marketplace` — owner-authorised approvals, commission settings and full refunds
 - `/concierge` — personal planning
 - `/partners` — separate provider and hotel partnership funnels
 - `/request` — experience, concierge, provider and hotel enquiries
@@ -36,9 +40,14 @@ Existing photography stays in `public/veyra`. Update the editorial collection in
 
 The form does not send messages, create database rows, take payment, reserve capacity or claim a booking is confirmed. No personal enquiry data is stored in browser storage. The inbox must be monitored by the operating team.
 
-Legacy `/book/[slug]`, `/pricing` and provider onboarding entry points lead to the new manual flow. Existing authenticated dashboards and integrations are retained. Public launch routes do not depend on Supabase session refresh or require login.
+## Provider marketplace and activation
+
+See [Marketplace setup](docs/marketplace-setup.md) for staging migration, administrator bootstrap, Stripe Connect, webhook configuration, reconciliation and the required end-to-end payment checklist. Deploying code does not apply the migration or activate payments. Previews reject live Stripe credentials and checkout fails closed without the signing secret. No invented services, prices, dates or commission rate are seeded.
+
+Providers apply using verified Supabase accounts. A trusted marketplace administrator approves them and explicitly agrees a commission percentage. Approved providers connect Stripe, add services and sessions, and publish when eligible. Payment amounts, commission and capacity are checked server-side. A booking becomes confirmed only after verification with Stripe. Full administrator refunds reverse both the provider transfer and Veyra commission. Email delivery is not implemented; confirmation pages and dashboards display booking records.
+
+The unsafe legacy booking-creation and client-priced checkout actions are disabled. Existing subscriptions and unrelated dashboards remain separate legacy features. `/provider/onboarding` now opens the provider application flow. `/pricing` still leads to partnerships.
 
 ## Preview and release
 
 This redesign is reviewed on a separate branch and draft pull request. GitHub's existing Vercel integration creates the preview. Do not merge, promote the preview or assign production domains without the owner's approval.
-

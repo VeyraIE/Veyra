@@ -4,6 +4,7 @@ import { AdminPanel } from '@/components/marketplace/admin-panel'
 import { marketplaceDatabase, paymentsConfigured, requireMarketplaceAdmin } from '@/lib/marketplace/server'
 
 export const dynamic = 'force-dynamic'
+export const metadata = { title: 'Marketplace management', robots: { index: false, follow: false } }
 
 export default async function MarketplaceAdmin() {
   try { await requireMarketplaceAdmin() } catch {
