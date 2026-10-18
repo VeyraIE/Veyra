@@ -24,8 +24,8 @@ export function ProvidersSection() {
             Grow your business with VEYRA.
           </h2>
           <p className="mt-5 max-w-md text-lg leading-relaxed text-muted-foreground">
-            Reach customers actively searching for experiences, with personal support
-            from our team to help arrange enquiries and bookings.
+            Once approved, add your own services, prices and available sessions.
+            Customers book and pay on Veyra, with your agreed commission deducted before payout.
           </p>
           <div className="mt-9">
             <Button asChild size="lg" className="h-13 rounded-full px-8 text-base font-semibold">
@@ -41,3 +41,4 @@ export function ProvidersSection() {
     </section>
   )
 }
+

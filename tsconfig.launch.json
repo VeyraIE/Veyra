@@ -18,8 +18,20 @@
     "components/veyra/experience-card.tsx",
     "components/veyra/request-form.tsx",
     "lib/experience-edit.ts",
-    "middleware.ts"
+    "middleware.ts",
+    "lib/marketplace/**/*.ts",
+    "components/marketplace/**/*.tsx",
+    "app/book/**/*.tsx",
+    "app/provider/dashboard/page.tsx",
+    "app/provider/onboarding/page.tsx",
+    "app/admin/marketplace/page.tsx",
+    "app/api/marketplace/**/*.ts",
+    "app/api/stripe/**/*.ts",
+    "app/auth/login/page.tsx",
+    "app/auth/sign-up/page.tsx",
+    "app/auth/callback/route.ts",
+    "app/actions/bookings.ts",
+    "app/actions/stripe.ts"
   ],
   "exclude": ["node_modules"]
 }
-

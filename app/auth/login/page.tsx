@@ -43,7 +43,8 @@ export default function LoginPage() {
       return
     }
 
-    router.push("/dashboard")
+    const requested = new URLSearchParams(window.location.search).get("redirect")
+    router.push(["/provider/dashboard", "/provider/onboarding", "/admin/marketplace", "/dashboard"].includes(requested ?? "") ? requested! : "/provider/dashboard")
   }
 
   const handleOAuthLogin = async (provider: "google" | "apple") => {
@@ -51,7 +52,7 @@ export default function LoginPage() {
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`
+        redirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback?next=/provider/dashboard`
       }
     })
   }
@@ -63,14 +64,14 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <Link href="/" className="flex items-center gap-2 mb-8">
             <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-              <span className="text-xl font-bold text-primary-foreground">A</span>
+              <span className="text-xl font-bold text-primary-foreground">V</span>
             </div>
-            <span className="text-xl font-bold text-foreground">Activio</span>
+            <span className="text-xl font-bold text-foreground">VEYRA</span>
           </Link>
 
           <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back</h1>
           <p className="text-muted-foreground mb-8">
-            Sign in to continue to Activio Ireland
+            Sign in to continue to Veyra
           </p>
 
           {/* OAuth Buttons */}
@@ -110,11 +111,12 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
+              <label htmlFor="login-email" className="text-sm font-medium text-foreground mb-2 block">
                 Email
               </label>
               <div className="relative">
                 <Input
+                  id="login-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -128,7 +130,7 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-foreground">
+                <label htmlFor="login-password" className="text-sm font-medium text-foreground">
                   Password
                 </label>
                 <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
@@ -137,6 +139,7 @@ export default function LoginPage() {
               </div>
               <div className="relative">
                 <Input
+                  id="login-password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -147,6 +150,7 @@ export default function LoginPage() {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <button
                   type="button"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
@@ -175,7 +179,7 @@ export default function LoginPage() {
           </p>
 
           <p className="text-center text-muted-foreground mt-4">
-            <Link href="/provider/register" className="text-primary font-medium hover:underline">
+            <Link href="/provider/onboarding" className="text-primary font-medium hover:underline">
               Register as an activity provider
             </Link>
           </p>
@@ -185,17 +189,17 @@ export default function LoginPage() {
       {/* Right Side - Image/Branding */}
       <div className="hidden lg:flex flex-1 bg-primary items-center justify-center p-12">
         <div className="max-w-md text-center text-primary-foreground">
-          <h2 className="text-4xl font-bold mb-6">Discover amazing activities for your family</h2>
+          <h2 className="text-4xl font-bold mb-6">Extraordinary experiences start here</h2>
           <p className="text-lg opacity-90 mb-8">
-            Join thousands of Irish families finding football, swimming, dance, music, and more for their children.
+            Apply as a provider, publish your services after approval, and connect with people discovering Ireland.
           </p>
           <div className="grid grid-cols-3 gap-4">
-            {["5,000+", "200+", "50K+"].map((stat, idx) => (
+            {["Discover", "Create", "Connect"].map((stat, idx) => (
               <Card key={idx} className="bg-white/10 border-0">
                 <CardContent className="p-4 text-center">
                   <p className="text-2xl font-bold">{stat}</p>
                   <p className="text-sm opacity-75">
-                    {idx === 0 ? "Activities" : idx === 1 ? "Providers" : "Bookings"}
+                    {idx === 0 ? "Experiences" : idx === 1 ? "Services" : "People"}
                   </p>
                 </CardContent>
               </Card>
@@ -206,3 +210,4 @@ export default function LoginPage() {
     </div>
   )
 }
+

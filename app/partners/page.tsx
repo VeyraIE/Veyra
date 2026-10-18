@@ -24,9 +24,9 @@ export default function PartnersPage() {
     <em>Let’s share it.</em>
     </h2>
     <p>From independent studios to outdoor guides and creative hosts, we’re looking for people who care about what they do.</p>
-    <ul>{['A considered space for your experience', 'Personal support with enquiries and arrangements', 'Partnership terms agreed before you join'].map(item => <li key={item}>
+    <ul>{['Add services, prices and sessions after approval', 'Customers book and pay directly on Veyra', 'Agreed commission deducted before your payout'].map(item => <li key={item}>
     <Check size={16} />{item}</li>)}</ul>
-    <Link href={requestLink('provider')} className="v-button">Become a provider partner <ArrowUpRight size={17} />
+    <Link href="/provider/onboarding" className="v-button">Become a provider partner <ArrowUpRight size={17} />
     </Link>
     </div>
     </article>
@@ -54,4 +54,3 @@ export default function PartnersPage() {
     </section>
     </PageShell>
 }
-

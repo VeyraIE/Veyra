@@ -67,7 +67,7 @@ export function Header(_props: { user?: unknown }) {
         </div>
         <div className="hidden items-center gap-2 md:flex">
           <Button variant="ghost" size="icon" asChild><Link href="/discover" aria-label="Search experiences"><Search className="h-5 w-5" /></Link></Button>
-          <Button asChild className="rounded-full"><Link href="/request">Plan an Experience</Link></Button>
+          <Button asChild className="rounded-full"><Link href="/book">Book an Experience</Link></Button>
         </div>
         <Button variant="ghost" size="icon" className="md:hidden" aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileMenuOpen} aria-controls="mobile-navigation" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -79,7 +79,7 @@ export function Header(_props: { user?: unknown }) {
           <div className="grid grid-cols-3 gap-2 py-3">
             {categoryLinks.map(category => <Link key={category.label} href={'/discover?category=' + category.category} onClick={() => setMobileMenuOpen(false)} className="rounded-full border border-border px-3 py-2 text-center text-xs">{category.label}</Link>)}
           </div>
-          <Button asChild className="w-full rounded-full"><Link href="/request" onClick={() => setMobileMenuOpen(false)}>Plan an Experience <ArrowRight className="h-4 w-4" /></Link></Button>
+          <Button asChild className="w-full rounded-full"><Link href="/book" onClick={() => setMobileMenuOpen(false)}>Book an Experience <ArrowRight className="h-4 w-4" /></Link></Button>
         </nav>
       )}
     </header>
@@ -103,9 +103,9 @@ export function Footer() {
           <div>
             <p className="text-sm font-semibold text-foreground">For Partners</p>
             <ul className="mt-4 space-y-3">
-              <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/request?type=provider">Become a Provider</Link></li>
+              <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/provider/onboarding">Become a Provider</Link></li>
               <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/request?type=hotel">For Hotels & Stays</Link></li>
-              <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/partners">Partnerships</Link></li>
+              <li><Link className="text-sm text-muted-foreground hover:text-primary" href="/provider/dashboard">Provider Dashboard</Link></li>
             </ul>
           </div>
           <div>

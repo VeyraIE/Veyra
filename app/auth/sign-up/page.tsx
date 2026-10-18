@@ -40,7 +40,7 @@ export default function SignUpPage() {
       email,
       password,
       options: {
-        emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`,
+        emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback?next=/provider/dashboard`,
         data: {
           full_name: fullName,
           role: "user"
@@ -95,14 +95,14 @@ export default function SignUpPage() {
         <div className="w-full max-w-md">
           <Link href="/" className="flex items-center gap-2 mb-8">
             <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-              <span className="text-xl font-bold text-primary-foreground">A</span>
+              <span className="text-xl font-bold text-primary-foreground">V</span>
             </div>
-            <span className="text-xl font-bold text-foreground">Activio</span>
+            <span className="text-xl font-bold text-foreground">VEYRA</span>
           </Link>
 
           <h1 className="text-3xl font-bold text-foreground mb-2">Create your account</h1>
           <p className="text-muted-foreground mb-8">
-            Join Activio Ireland to discover activities for your family
+            Join Veyra to discover activities for your family
           </p>
 
           {/* OAuth Buttons */}
@@ -142,11 +142,12 @@ export default function SignUpPage() {
             )}
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
+              <label htmlFor="signup-name" className="text-sm font-medium text-foreground mb-2 block">
                 Full Name
               </label>
               <div className="relative">
                 <Input
+                  id="signup-name"
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -159,11 +160,12 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
+              <label htmlFor="signup-email" className="text-sm font-medium text-foreground mb-2 block">
                 Email
               </label>
               <div className="relative">
                 <Input
+                  id="signup-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -176,11 +178,12 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
+              <label htmlFor="signup-password" className="text-sm font-medium text-foreground mb-2 block">
                 Password
               </label>
               <div className="relative">
                 <Input
+                  id="signup-password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -192,6 +195,7 @@ export default function SignUpPage() {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <button
                   type="button"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
@@ -215,7 +219,7 @@ export default function SignUpPage() {
 
           <p className="text-center text-xs text-muted-foreground mt-4">
             By creating an account, you agree to our{" "}
-            <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link>
+            <Link href="/privacy" className="text-primary hover:underline">account and data information</Link>
             {" "}and{" "}
             <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
           </p>
@@ -234,14 +238,14 @@ export default function SignUpPage() {
         <div className="max-w-md text-center text-primary-foreground">
           <h2 className="text-4xl font-bold mb-6">Start your journey today</h2>
           <p className="text-lg opacity-90 mb-8">
-            Create an account to book activities, save favorites, and manage your family&apos;s schedule all in one place.
+            Create your provider account, verify your email and apply to join Veyra. Guests can book without an account.
           </p>
           <div className="space-y-4 text-left">
             {[
-              "Discover 5,000+ activities across Ireland",
-              "Book instantly with secure payments",
-              "Manage your family's schedule easily",
-              "Get personalized recommendations"
+              "Apply to join our Ireland provider community",
+              "Add services after your account is approved",
+              "Set your own prices and available sessions",
+              "Receive payments through your connected Stripe account"
             ].map((feature, idx) => (
               <div key={idx} className="flex items-center gap-3">
                 <div className="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
@@ -256,3 +260,4 @@ export default function SignUpPage() {
     </div>
   )
 }
+
