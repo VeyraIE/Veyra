@@ -1,31 +1,18 @@
-import { Header } from '@/components/layout/header'
-import { Footer } from '@/components/layout/footer'
-import { Hero } from '@/components/veyra/hero'
-import { DiscoveryGrid } from '@/components/veyra/discovery-grid'
-import { ProblemSection } from '@/components/veyra/problem-section'
-import { FeaturedExperiences } from '@/components/veyra/featured-experiences'
-import { TrustSystem } from '@/components/veyra/trust-system'
-import { WeekendPlanner } from '@/components/veyra/weekend-planner'
-import { ProvidersSection } from '@/components/veyra/providers-section'
-import { AppPreview } from '@/components/veyra/app-preview'
+import Link from 'next/link'
+import { ArrowDown, ArrowRight, ArrowUpRight, Compass, Leaf, MoveUpRight, Sparkles, Waves } from 'lucide-react'
+import { PageShell } from '@/components/veyra/site-shell'
+import { ExperienceCard } from '@/components/veyra/experience-card'
+import { categories, editImage, experiences } from '@/lib/experience-edit'
 
 export default function HomePage() {
-  return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-
-      <main className="flex-1">
-        <Hero />
-        <DiscoveryGrid />
-        <ProblemSection />
-        <FeaturedExperiences />
-        <TrustSystem />
-        <WeekendPlanner />
-        <ProvidersSection />
-        <AppPreview />
-      </main>
-
-      <Footer />
-    </div>
-  )
+  return <PageShell>
+    <section className="v-hero"><img className="v-hero-image" src={editImage('hero')} alt="An open coastal road winding through the Irish landscape" fetchPriority="high" /><div className="v-hero-shade" /><div className="v-wrap v-hero-content"><span className="v-eyebrow v-light-eyebrow"><span className="v-dot" /> A life well experienced. Starting in Ireland.</span><h1>Less ordinary.<br />More <em>living.</em></h1><p>Remarkable experiences. Places that stay with you.<br className="v-desktop-break" /> And a little help making it all happen.</p><div className="v-hero-buttons"><Link href="/discover" className="v-button">Find your next experience <ArrowUpRight size={18} /></Link><Link href="/concierge" className="v-text-link">Let us take care of it <ArrowRight size={17} /></Link></div><div className="v-hero-bottom"><span>YOUR TIME. BEAUTIFULLY SPENT.</span><a href="#ireland-edit" aria-label="Explore the Ireland edit"><ArrowDown size={18} /></a><span>53°20′ N &nbsp; 06°15′ W</span></div></div><div className="v-hero-caption"><span>THE IRELAND CHAPTER</span><span>A good place to begin.</span></div></section>
+    <section className="v-intro-strip"><div className="v-wrap"><span><Compass size={17} /> Discover something different</span><span><Leaf size={17} /> Local knowledge. Considered choices.</span><span><Sparkles size={17} /> Personally arranged, from start to finish</span></div></section>
+    <section className="v-section v-wrap" id="ireland-edit"><div className="v-section-heading"><div><span className="v-eyebrow">The Ireland edit</span><h2>Good plans start<br />with a little <em>inspiration.</em></h2></div><div><p>From Atlantic mornings to afternoons that<br className="v-desktop-break" /> turn into something special. Find your kind of good.</p><Link href="/discover" className="v-underlined">Explore the collection <ArrowUpRight size={17} /></Link></div></div><div className="v-category-links">{categories.map(category => <Link className={category.slug === 'all' ? 'is-active' : ''} href={`/discover?category=${category.slug}`} key={category.slug}>{category.label}</Link>)}</div><div className="v-experience-grid">{experiences.slice(0, 3).map(experience => <ExperienceCard key={experience.slug} experience={experience} />)}</div><p className="v-collection-note">A taste of what we can help arrange. Availability, providers and pricing are confirmed personally before you book.</p></section>
+    <section className="v-concierge-feature"><div className="v-concierge-photo"><img src={editImage('exp-yoga')} alt="A peaceful retreat in the Irish countryside" loading="lazy" width={900} height={900} /><span>LESS PLANNING. MORE PRESENCE.</span></div><div className="v-concierge-copy"><span className="v-eyebrow">The Veyra concierge</span><div className="v-line-star">✳</div><h2>You make the memories.<br /><em>We make the plans.</em></h2><p>A special occasion. A weekend away. A day that deserves a little more thought. Tell us what you have in mind, and we’ll bring the details together.</p><ul><li><span>01</span> A plan shaped around you</li><li><span>02</span> Local insight, thoughtful suggestions</li><li><span>03</span> One person to bring it all together</li></ul><Link href="/concierge" className="v-button">Meet your concierge <ArrowUpRight size={18} /></Link><span className="v-small-note">Personal service. No app required.</span></div></section>
+    <section className="v-section v-wrap"><div className="v-section-heading"><div><span className="v-eyebrow">Follow your feeling</span><h2>What does a good<br />day <em>look like to you?</em></h2></div><p>Room to explore. Space to reset.<br />Something you’ve never tried before.</p></div><div className="v-mood-grid">{[{ title: 'A breath of fresh air.', label: 'Outdoors & adventure', image: 'explore', category: 'adventure', icon: Compass }, { title: 'A slower kind of good.', label: 'Wellness & reset', image: 'recover', category: 'wellness', icon: Waves }, { title: 'Something of your own.', label: 'Arts & culture', image: 'learn', category: 'learning', icon: Sparkles }].map(mood => <Link className="v-mood" href={`/discover?category=${mood.category}`} key={mood.category}><img src={editImage(mood.image)} alt={mood.label} width={600} height={650} loading="lazy" /><div><mood.icon size={23} /><span>{mood.label}</span><h3>{mood.title}</h3></div><ArrowUpRight className="v-mood-arrow" size={21} /></Link>)}</div></section>
+    <section className="v-how v-wrap"><span className="v-eyebrow">Easy from the first hello</span><h2>A little inspiration.<br /><em>We’ll take it from there.</em></h2><div className="v-steps">{[{ title: 'Find your kind of good.', text: 'Explore the edit, or tell your concierge what you’re dreaming of.' }, { title: 'Make it yours.', text: 'Share your dates, group and wish list. We’ll check the details with our local contacts.' }, { title: 'Enjoy the moment.', text: 'Review your proposal and confirm directly with the team. Then make the most of it.' }].map((step, index) => <div key={step.title}><span className="v-step-number">0{index + 1}</span><h3>{step.title}</h3><p>{step.text}</p></div>)}</div></section>
+    <section className="v-partner-band"><div className="v-wrap"><div><span className="v-eyebrow">Good company</span><h2>Exceptional experiences.<br /><em>Even better partnerships.</em></h2></div><div className="v-partner-links"><Link href="/partners?type=provider"><span><small>FOR EXPERIENCE PROVIDERS</small>Bring your experience to Veyra.</span><MoveUpRight size={25} /></Link><Link href="/partners?type=hotel"><span><small>FOR HOTELS & STAYS</small>Make their stay something special.</span><MoveUpRight size={25} /></Link></div></div></section>
+  </PageShell>
 }
+

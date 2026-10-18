@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/layout.tsx",
+    "app/page.tsx",
+    "app/discover/page.tsx",
+    "app/concierge/page.tsx",
+    "app/partners/page.tsx",
+    "app/request/page.tsx",
+    "app/privacy/page.tsx",
+    "app/experiences/**/*.tsx",
+    "components/veyra/site-shell.tsx",
+    "components/veyra/discovery.tsx",
+    "components/veyra/experience-card.tsx",
+    "components/veyra/request-form.tsx",
+    "lib/experience-edit.ts",
+    "middleware.ts"
+  ],
+  "exclude": ["node_modules"]
+}
+

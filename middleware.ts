@@ -1,7 +1,12 @@
 import { updateSession } from '@/lib/supabase/middleware'
-import { type NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+  const publicPages = ['/', '/discover', '/concierge', '/partners', '/request', '/privacy', '/about', '/pricing']
+  if (publicPages.includes(pathname) || pathname.startsWith('/experiences/') || pathname.startsWith('/book/') || pathname === '/provider/onboarding') {
+    return NextResponse.next()
+  }
   return await updateSession(request)
 }
 
@@ -18,3 +23,5 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
+
+
