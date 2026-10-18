@@ -1,10 +1,10 @@
 .v-site {
   --v-green:#00d38a;
-  --v-bg:#0c100e;
-  --v-line:#29312b;
-  --v-muted:#a6b0a9;
+  --v-bg:#0A0A0A;
+  --v-line:#232323;
+  --v-muted:#A3A3A3;
   background:var(--v-bg);
-  color:#f2f3ec;
+  color:#F5F5F5;
   font-family:var(--font-inter),sans-serif;
   font-size:14px;
   line-height:1.6
@@ -18,7 +18,7 @@
   text-decoration:none
 }
 
-.v-site button,.v-site input,.v-site select,.v-site textarea {
+.v-site main button,.v-site main input,.v-site main select,.v-site main textarea {
   font:inherit
 }
 
@@ -43,14 +43,10 @@
 }
 
 .v-site h1,.v-site h2,.v-site h3,.v-logo {
-  font-family:var(--font-fraunces),Georgia,serif;
-  font-weight:400;
+  font-family:var(--font-inter),system-ui,sans-serif;
+  font-weight:700;
   letter-spacing:-.045em;
   line-height:1.12
-}
-
-.v-site h1,.v-site h2,.v-site h3,.v-site p {
-  margin:0
 }
 
 .v-site h1 {
@@ -66,11 +62,12 @@
 }
 
 .v-site h1 em,.v-site h2 em {
-  font-weight:350;
-  color:#b8ccb4
+  font-weight:700;
+  font-style:normal;
+  color:#A3A3A3
 }
 
-.v-site p {
+.v-site main p {
   color:var(--v-muted);
   line-height:1.8
 }
@@ -87,7 +84,7 @@
 
 .v-header {
   position:relative;
-  background:#0c100e;
+  background:#0A0A0A;
   z-index:30;
   border-bottom:1px solid var(--v-line)
 }
@@ -106,7 +103,7 @@
   line-height:1;
   display:inline-flex;
   align-items:baseline;
-  color:#f2f3ec
+  color:#F5F5F5
 }
 
 .v-logo span {
@@ -162,8 +159,8 @@
   color:#081a11!important;
   padding:14px 22px;
   border:1px solid var(--v-green);
-  border-radius:3px;
-  font-size:12px;
+  border-radius:999px;
+  font-size:14px;
   font-weight:600;
   transition:background .2s,transform .2s
 }
@@ -183,7 +180,7 @@
 
 .v-menu {
   display:none;
-  color:#f2f3ec;
+  color:#F5F5F5;
   background:none;
   border:0;
   padding:10px
@@ -421,16 +418,16 @@
 .v-category-links a,.v-category-links button {
   padding:9px 15px;
   border:1px solid var(--v-line);
-  border-radius:2px;
-  font-size:10px;
+  border-radius:999px;
+  font-size:12px;
   white-space:nowrap;
   background:transparent;
   color:#c4cec3
 }
 
 .v-category-links .is-active {
-  background:#dce7d4;
-  color:#122319;
+  background:var(--v-green);
+  color:#0A0A0A;
   border-color:#dce7d4
 }
 
@@ -532,7 +529,7 @@
 .v-concierge-feature {
   display:grid;
   grid-template-columns:1fr 1fr;
-  background:#17251c;
+  background:#151515;
   max-width:1600px;
   margin:0 auto
 }
@@ -601,7 +598,7 @@
 
 .v-concierge-copy li {
   padding:12px 0;
-  border-bottom:1px solid #38503d
+  border-bottom:1px solid #232323
 }
 
 .v-concierge-copy li span {
@@ -753,7 +750,7 @@
   gap:20px;
   padding:23px 0;
   border-bottom:1px solid #94a68b;
-  font-family:var(--font-fraunces),Georgia,serif;
+  font-family:var(--font-inter),system-ui,sans-serif;
   font-size:24px;
   letter-spacing:-.03em
 }
@@ -772,7 +769,7 @@
 }
 
 .v-footer {
-  background:#0b0e0c;
+  background:#0A0A0A;
   padding-top:62px
 }
 
@@ -841,8 +838,8 @@
 .v-search-row {
   display:grid;
   grid-template-columns:1fr 300px;
-  border:1px solid #425044;
-  background:#152018;
+  border:1px solid #232323;
+  background:#151515;
   border-radius:3px
 }
 
@@ -869,7 +866,7 @@
 }
 
 .v-county {
-  border-left:1px solid #425044;
+  border-left:1px solid #232323;
   display:flex;
   flex-direction:column;
   padding:10px 22px
@@ -891,7 +888,7 @@
 }
 
 .v-site option {
-  background:#19261c;
+  background:#151515;
   color:#f1f3e9
 }
 
@@ -1031,8 +1028,8 @@
 }
 
 .v-enquiry-box {
-  background:#17241a;
-  border:1px solid #334735;
+  background:#151515;
+  border:1px solid #232323;
   padding:26px
 }
 
@@ -1141,7 +1138,7 @@
 }
 
 .v-partner-cards article {
-  background:#152018;
+  background:#151515;
   border:1px solid var(--v-line)
 }
 
@@ -1225,8 +1222,8 @@
 }
 
 .v-request-panel {
-  background:#152018;
-  border:1px solid #2d402f;
+  background:#151515;
+  border:1px solid #232323;
   padding:36px;
   border-radius:3px
 }
@@ -1258,8 +1255,8 @@
   width:100%;
   padding:11px 12px;
   font-size:11px;
-  background:#101811;
-  border:1px solid #3c5039;
+  background:#0A0A0A;
+  border:1px solid #232323;
   border-radius:2px;
   color:#e2eadb;
   min-height:43px;
@@ -1699,7 +1696,7 @@
   }
   .v-county {
     border-left:0;
-    border-top:1px solid #425044;
+    border-top:1px solid #232323;
     padding:9px 19px
   }
   .v-discovery {

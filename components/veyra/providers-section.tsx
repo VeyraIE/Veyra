@@ -24,8 +24,8 @@ export function ProvidersSection() {
             Grow your business with VEYRA.
           </h2>
           <p className="mt-5 max-w-md text-lg leading-relaxed text-muted-foreground">
-            Reach customers actively searching for experiences and manage bookings
-            in one premium ecosystem.
+            Reach customers actively searching for experiences, with personal support
+            from our team to help arrange enquiries and bookings.
           </p>
           <div className="mt-9">
             <Button asChild size="lg" className="h-13 rounded-full px-8 text-base font-semibold">
@@ -34,6 +34,7 @@ export function ProvidersSection() {
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
+            <Link href="/request?type=hotel" className="mt-5 block text-sm font-medium text-muted-foreground hover:text-primary">For hotels & stays →</Link>
           </div>
         </Reveal>
       </div>

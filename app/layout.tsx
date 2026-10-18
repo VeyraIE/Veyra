@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Geist_Mono, Fraunces } from 'next/font/google'
+import { Inter, Geist_Mono, Bricolage_Grotesque } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import './globals.css'
@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
   display: 'swap',
 })
 
-const fraunces = Fraunces({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: '--font-fraunces',
+  variable: '--font-bricolage',
   display: 'swap',
 })
 
@@ -79,7 +79,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en-IE" className={`dark ${inter.variable} ${geistMono.variable} ${fraunces.variable} bg-background`}>
+    <html lang="en-IE" className={`dark ${inter.variable} ${geistMono.variable} ${bricolage.variable} bg-background`}>
       <body className="font-sans antialiased min-h-screen">
         {children}
         <Toaster 

@@ -6,7 +6,7 @@ const tiles = [
   { title: 'RECOVER', desc: 'Sauna, mobility, recovery, wellness.', image: '/veyra/recover.png', href: '/discover?category=wellness', span: '' },
   { title: 'EXPLORE', desc: 'Adventure, hiking, outdoors.', image: '/veyra/explore.png', href: '/discover?category=adventure', span: '' },
   { title: 'LEARN', desc: 'Music, hobbies, creativity, education.', image: '/veyra/learn.png', href: '/discover?category=learning', span: '' },
-  { title: 'COMPETE', desc: 'Sport clubs, coaching, academies.', image: '/veyra/compete.png', href: '/discover?category=sport', span: '' },
+  { title: 'COMPETE', desc: 'Sport clubs, coaching, academies.', image: '/veyra/compete.png', href: '/discover?category=fitness', span: '' },
   { title: 'FAMILY', desc: 'Kids activities, camps, experiences.', image: '/veyra/family.png', href: '/discover?category=family', span: 'lg:col-span-2' },
 ]
 

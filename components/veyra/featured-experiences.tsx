@@ -3,10 +3,10 @@ import { MapPin, ArrowUpRight } from 'lucide-react'
 import { Reveal } from '@/components/veyra/reveal'
 
 const experiences = [
-  { title: 'Private Reformer Pilates', location: 'Dublin', tier: 'VEYRA Select', price: '€28', image: '/veyra/exp-pilates.png' },
-  { title: 'Surf Lessons', location: 'Donegal', tier: 'VEYRA Signature', price: '€45', image: '/veyra/exp-surf.png' },
-  { title: 'Cold Water Wellness Retreat', location: 'Galway', tier: 'VEYRA Premium', price: '€95', image: '/veyra/exp-coldwater.png' },
-  { title: 'Luxury Yoga Retreat', location: 'Wicklow', tier: 'VEYRA Signature', price: '€120', image: '/veyra/exp-yoga.png' },
+  { title: 'Private Reformer Pilates', location: 'Dublin', tier: 'Move', slug: 'private-pilates', image: '/veyra/exp-pilates.png' },
+  { title: 'Surf Lessons', location: 'Donegal', tier: 'Explore', slug: 'atlantic-surf', image: '/veyra/exp-surf.png' },
+  { title: 'Cold Water Wellness Retreat', location: 'Galway', tier: 'Recover', slug: 'coastal-reset', image: '/veyra/exp-coldwater.png' },
+  { title: 'Luxury Yoga Retreat', location: 'Wicklow', tier: 'Recover', slug: 'wicklow-retreat', image: '/veyra/exp-yoga.png' },
 ]
 
 export function FeaturedExperiences() {
@@ -28,11 +28,12 @@ export function FeaturedExperiences() {
         </Link>
       </Reveal>
 
+      <p className="mt-6 text-sm text-muted-foreground">Experience inspiration. Providers, availability and pricing are confirmed personally before you book.</p>
       <div className="mt-14 flex flex-col gap-6">
         {experiences.map((exp, i) => (
           <Reveal key={exp.title} delay={i * 80}>
             <Link
-              href="/discover"
+              href={`/experiences/${exp.slug}`}
               className="group relative grid overflow-hidden rounded-3xl border border-border bg-card transition-colors duration-500 hover:border-primary/30 md:grid-cols-[1.1fr_1fr]"
             >
               <div className="relative h-64 overflow-hidden md:h-80">
@@ -55,8 +56,7 @@ export function FeaturedExperiences() {
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                   <div>
-                    <span className="text-sm text-muted-foreground">from </span>
-                    <span className="text-2xl font-bold">{exp.price}</span>
+                    <span className="text-sm font-medium text-muted-foreground">Enquire for pricing</span>
                   </div>
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:scale-105">
                     <ArrowUpRight className="h-5 w-5" />
