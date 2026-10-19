@@ -4,24 +4,24 @@ import { cn } from '@/lib/utils'
 
 const tiers = [
   {
-    name: 'VEYRA Verified',
+    name: 'Discover',
     icon: BadgeCheck,
     stars: 1,
-    points: ['Trusted providers', 'Reliable quality', 'Consistent experience'],
+    points: ['Choose your interests', 'Explore the Ireland edit', 'Tell us what you have in mind'],
     featured: false,
   },
   {
-    name: 'VEYRA Select',
+    name: 'Plan',
     icon: Star,
     stars: 2,
-    points: ['Highly rated providers', 'Premium service quality', 'Better experience'],
+    points: ['Personal recommendations', 'Availability checked for you', 'Pricing agreed before booking'],
     featured: true,
   },
   {
-    name: 'VEYRA Signature',
+    name: 'Experience',
     icon: Crown,
     stars: 3,
-    points: ['Exceptional providers', 'Best in class experiences', 'Premium service standard'],
+    points: ['Arrangements confirmed personally', 'Clear details before you go', 'Support from a real person'],
     featured: false,
   },
 ]
@@ -34,11 +34,11 @@ export function TrustSystem() {
         <Reveal className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">The VEYRA Standard</span>
           <h2 className="mt-4 text-balance text-4xl font-bold tracking-tight sm:text-5xl">
-            Quality you can trust, by design.
+            A better experience, by design.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Every provider is rated against the VEYRA standard, so you always know
-            exactly what to expect.
+            Thoughtful discovery, personal planning and clear arrangements — so you
+            know what to expect before you book.
           </p>
         </Reveal>
 
@@ -55,23 +55,11 @@ export function TrustSystem() {
               >
                 {tier.featured && (
                   <span className="absolute right-6 top-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                    Most loved
+                    Personal service
                   </span>
                 )}
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-background">
                   <tier.icon className="h-7 w-7 text-primary" />
-                </div>
-
-                <div className="mt-6 flex items-center gap-1">
-                  {Array.from({ length: 3 }).map((_, s) => (
-                    <Star
-                      key={s}
-                      className={cn(
-                        'h-4 w-4',
-                        s < tier.stars ? 'fill-primary text-primary' : 'text-border'
-                      )}
-                    />
-                  ))}
                 </div>
 
                 <h3 className="mt-4 text-2xl font-bold tracking-tight">{tier.name}</h3>

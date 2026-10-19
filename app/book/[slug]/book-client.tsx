@@ -113,7 +113,7 @@ export default function BookClient({
               <CardContent className="p-6">
                 <div className="flex gap-4 mb-6">
                   <div className="w-24 h-24 rounded-xl overflow-hidden relative shrink-0">
-                    <Image
+                    <Image unoptimized
                       src={activity.cover_image || activity.images?.[0] || "/placeholder.jpg"}
                       alt={activity.title}
                       fill
@@ -474,7 +474,7 @@ export default function BookClient({
                 
                 <div className="flex gap-4 mb-6">
                   <div className="w-20 h-20 rounded-xl overflow-hidden relative shrink-0">
-                    <Image
+                    <Image unoptimized
                       src={activity.cover_image || activity.images?.[0] || "/placeholder.jpg"}
                       alt={activity.title}
                       fill

@@ -3,6 +3,7 @@ import { Inter, Geist_Mono, Bricolage_Grotesque } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import './globals.css'
+import './veyra.css'
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -24,10 +25,10 @@ const bricolage = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
   title: {
-    default: 'VEYRA - Discover Ireland Beyond the Ordinary',
+    default: 'VEYRA — A life well experienced',
     template: '%s | VEYRA',
   },
-  description: 'Find and book experiences, wellness, sport, adventure and everything worth doing across Ireland — all in one seamless, premium platform.',
+  description: 'Discover Irish experiences, thoughtful escapes and personal concierge. Your time, beautifully spent.',
   keywords: ['experiences', 'Ireland', 'wellness', 'adventure', 'fitness', 'booking', 'lifestyle', 'sport', 'things to do', 'retreats'],
   authors: [{ name: 'VEYRA' }],
   creator: 'VEYRA',
@@ -36,11 +37,11 @@ export const metadata: Metadata = {
     locale: 'en_IE',
     url: 'https://veyra.ie',
     siteName: 'VEYRA',
-    title: 'VEYRA - Discover Ireland Beyond the Ordinary',
-    description: 'Find and book experiences, wellness, sport, adventure and everything worth doing across Ireland.',
+    title: 'VEYRA — A life well experienced',
+    description: 'Discover Irish experiences, thoughtful escapes and personal concierge. Your time, beautifully spent.',
     images: [
       {
-        url: '/og-image.png',
+        url: '/veyra/hero.png',
         width: 1200,
         height: 630,
         alt: 'VEYRA',
@@ -49,9 +50,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'VEYRA - Discover Ireland Beyond the Ordinary',
-    description: 'Find and book experiences, wellness, sport, adventure and everything worth doing across Ireland.',
-    images: ['/og-image.png'],
+    title: 'VEYRA — A life well experienced',
+    description: 'Discover Irish experiences, thoughtful escapes and personal concierge. Your time, beautifully spent.',
+    images: ['/veyra/hero.png'],
   },
   robots: {
     index: true,
@@ -59,20 +60,16 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico' },
       { url: '/icon.svg', type: 'image/svg+xml' },
     ],
-    apple: '/apple-touch-icon.png',
+    apple: '/apple-icon.png',
   },
-  manifest: '/manifest.json',
 }
 
 export const viewport: Viewport = {
   themeColor: '#0A0A0A',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: 'cover',
 }
 
@@ -82,7 +79,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`dark ${inter.variable} ${geistMono.variable} ${bricolage.variable} bg-background`}>
+    <html lang="en-IE" className={`dark ${inter.variable} ${geistMono.variable} ${bricolage.variable} bg-background`}>
       <body className="font-sans antialiased min-h-screen">
         {children}
         <Toaster 
@@ -98,3 +95,5 @@ export default function RootLayout({
     </html>
   )
 }
+
+

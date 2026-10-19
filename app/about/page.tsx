@@ -226,7 +226,7 @@ export default function AboutPage() {
               {team.map((member, index) => (
                 <div key={index} className="text-center">
                   <div className="relative w-32 h-32 mx-auto mb-4">
-                    <Image
+                    <Image unoptimized
                       src={member.image}
                       alt={member.name}
                       fill

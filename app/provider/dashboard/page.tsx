@@ -1,65 +1,34 @@
-import { redirect } from 'next/navigation'
-import type { Metadata } from 'next'
+import Link from 'next/link'
+import type { ComponentProps } from 'react'
+import { PageShell } from '@/components/veyra/site-shell'
+import { MarketplaceHeading, buttonClass } from '@/components/marketplace/presentation'
+import { ProviderPortal } from '@/components/marketplace/provider-portal'
 import { createClient } from '@/lib/supabase/server'
-import {
-  calculateProviderStats,
-  getProviderActivities,
-  getProviderBookings,
-  getProviderForUser,
-} from '@/lib/dashboard-queries'
-import ProviderDashboardClient, {
-  type TodaySession,
-} from './provider-dashboard-client'
+import { marketplaceDatabase } from '@/lib/marketplace/server'
 
-export const metadata: Metadata = {
-  title: 'Provider Dashboard | Veyra',
-  description:
-    'Track bookings, revenue, listings and today’s sessions for your activity business.',
-}
+export const dynamic = 'force-dynamic'
+export const metadata = { title: 'Provider dashboard', robots: { index: false, follow: false } }
 
-export default async function ProviderDashboardPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) redirect('/auth/login?redirect=/provider/dashboard')
-
-  // A provider record is the authorisation boundary here: without one there is
-  // no business to show, so send the user through onboarding instead.
-  const provider = await getProviderForUser(user.id)
-  if (!provider) redirect('/provider/onboarding')
-
-  const [activities, bookings] = await Promise.all([
-    getProviderActivities(provider.id),
-    getProviderBookings(provider.id),
-  ])
-
-  const stats = calculateProviderStats(activities, bookings)
-
-  // Today's sessions, restricted to this provider's own activity ids.
-  const activityIds = activities.map((a) => a.id)
-  let todaySessions: TodaySession[] = []
-
-  if (activityIds.length > 0) {
-    const today = new Date().toISOString().slice(0, 10)
-    const { data } = await supabase
-      .from('sessions')
-      .select('*, activity:activities(*)')
-      .in('activity_id', activityIds)
-      .eq('date', today)
-      .order('start_time', { ascending: true })
-
-    todaySessions = (data ?? []) as unknown as TodaySession[]
-  }
-
-  return (
-    <ProviderDashboardClient
-      provider={provider}
-      activities={activities}
-      bookings={bookings}
-      stats={stats}
-      todaySessions={todaySessions}
-    />
-  )
+export default async function ProviderDashboard() {
+  const client = await createClient()
+  const { data: { user } } = await client.auth.getUser()
+  if (!user) return <PageShell><section className="mx-auto max-w-7xl px-4 py-16 sm:px-6"><MarketplaceHeading eyebrow="Veyra for providers" title="Your experiences. Your business.">Apply for approval, add services and available sessions, and manage bookings in one place.</MarketplaceHeading><div className="flex flex-wrap gap-3"><Link className={buttonClass} href="/auth/sign-up?type=provider">Create provider account</Link><Link className="inline-flex items-center rounded-full border border-border px-6 py-3 text-sm" href="/auth/login?redirect=/provider/dashboard">Provider sign in</Link></div><p className="mt-5 text-sm text-muted-foreground">Create your account, verify your email, then submit your business for approval. Provider registration is separate from consumer membership.</p></section></PageShell>
+  if (!user.email_confirmed_at) return <PageShell><section className="mx-auto max-w-7xl px-4 py-16"><MarketplaceHeading eyebrow="Provider accounts" title="Verify your email first">Please use the verification link in your inbox before applying.</MarketplaceHeading></section></PageShell>
+  let configured = true
+  let provider = null
+  let offers: ComponentProps<typeof ProviderPortal>['offers'] = []
+  let bookings: ComponentProps<typeof ProviderPortal>['bookings'] = []
+  try {
+    const database = marketplaceDatabase()
+    const result = await database.from('veyra_marketplace_providers').select('id,business_name,approval_status,commission_bps,payments_ready,stripe_account_id').eq('user_id', user.id).maybeSingle()
+    if (result.error) configured = false
+    provider = result.data
+    if (provider?.approval_status === 'approved') {
+      const offerResult = await database.from('veyra_marketplace_offers').select('id,slug,title,active,unit_amount,pricing_mode,slots:veyra_marketplace_slots(id,starts_at,capacity)').eq('provider_id', provider.id).order('created_at', { ascending: false })
+      offers = offerResult.data ?? []
+      const bookingResult = await database.from('veyra_marketplace_reservations').select('id,title,starts_at,guests,total_amount,application_fee,customer_name,customer_email,status').eq('provider_id', provider.id).neq('status', 'held').neq('status', 'expired').order('created_at', { ascending: false }).limit(100)
+      bookings = bookingResult.data ?? []
+    }
+  } catch { configured = false }
+  return <PageShell><section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"><MarketplaceHeading eyebrow="Veyra for providers" title="Provider dashboard">A direct connection between what you do best and people looking for something extraordinary.</MarketplaceHeading><ProviderPortal provider={provider} offers={offers} bookings={bookings} configured={configured} /></section></PageShell>
 }

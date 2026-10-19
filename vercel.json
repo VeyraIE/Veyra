@@ -1,1 +1,5 @@
-{}
+{
+  "buildCommand": "pnpm exec tsc --project tsconfig.launch.json --noEmit && pnpm run build"
+}
+
+

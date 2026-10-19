@@ -1,8 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { authErrorMessage } from "@/lib/auth-errors"
+import { useAuthAvailability } from "@/lib/use-auth-availability"
+import { AuthServiceStatus } from "@/components/auth/service-status"
+import { Suspense, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -21,6 +24,20 @@ import {
 } from "lucide-react"
 
 export default function SignUpPage() {
+  return <Suspense fallback={<div className="min-h-screen bg-background p-8 text-muted-foreground">Loading account signup…</div>}><SignUpForm /></Suspense>
+}
+
+function SignUpForm() {
+  const { status, retry } = useAuthAvailability()
+  const searchParams = useSearchParams()
+  const providerAccount = searchParams.get("type") === "provider"
+  const destination = providerAccount ? "/provider/dashboard" : "/account"
+  const loginLink = "/auth/login?redirect=" + encodeURIComponent(destination)
+  function callbackUrl() {
+    const callback = new URL(process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? window.location.origin + "/auth/callback")
+    callback.searchParams.set("next", destination)
+    return callback.toString()
+  }
   const router = useRouter()
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
@@ -30,42 +47,33 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSignUp = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (isLoading || !status?.available || !status.email || !status.signup) return
     setIsLoading(true)
     setError(null)
-
-    const supabase = createClient()
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`,
-        data: {
-          full_name: fullName,
-          role: "user"
-        }
-      }
-    })
-
-    if (signUpError) {
-      setError(signUpError.message)
-      setIsLoading(false)
-      return
-    }
-
-    setSuccess(true)
-    setIsLoading(false)
+    try {
+      const supabase = createClient()
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(), password,
+        options: { emailRedirectTo: callbackUrl(), data: { full_name: fullName.trim(), role: "user" } }
+      })
+      if (signUpError) throw signUpError
+      if (data.session) { router.push(destination); router.refresh() }
+      else setSuccess(true)
+    } catch (issue) { setError(authErrorMessage(issue)) }
+    finally { setIsLoading(false) }
   }
 
   const handleOAuthLogin = async (provider: "google" | "apple") => {
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`
-      }
-    })
+    if (isLoading || !status?.available || !status[provider]) return
+    setIsLoading(true)
+    setError(null)
+    try {
+      const { error: issue } = await createClient().auth.signInWithOAuth({ provider, options: { redirectTo: callbackUrl() } })
+      if (issue) throw issue
+    } catch (issue) { setError(authErrorMessage(issue)) }
+    finally { setIsLoading(false) }
   }
 
   if (success) {
@@ -80,7 +88,7 @@ export default function SignUpPage() {
             We&apos;ve sent a confirmation link to <strong>{email}</strong>. 
             Please click the link to verify your account.
           </p>
-          <Button variant="outline" onClick={() => router.push("/auth/login")}>
+          <Button variant="outline" onClick={() => router.push(loginLink)}>
             Back to Login
           </Button>
         </div>
@@ -95,21 +103,24 @@ export default function SignUpPage() {
         <div className="w-full max-w-md">
           <Link href="/" className="flex items-center gap-2 mb-8">
             <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-              <span className="text-xl font-bold text-primary-foreground">A</span>
+              <span className="text-xl font-bold text-primary-foreground">V</span>
             </div>
-            <span className="text-xl font-bold text-foreground">Activio</span>
+            <span className="text-xl font-bold text-foreground">VEYRA</span>
           </Link>
 
-          <h1 className="text-3xl font-bold text-foreground mb-2">Create your account</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">{providerAccount ? "Create your provider account" : "Create your member account"}</h1>
           <p className="text-muted-foreground mb-8">
-            Join Activio Ireland to discover activities for your family
+            {providerAccount ? "Verify your email, then apply to list your business. Approval is required before publishing." : "Create your free account, then subscribe for €4.99/month to unlock paid member benefits. No payment is taken on signup."}
           </p>
 
+          <div className="mb-6 grid grid-cols-2 gap-2" aria-label="Account type"><Link aria-current={!providerAccount ? "page" : undefined} className={"rounded-full border px-4 py-3 text-center text-sm " + (!providerAccount ? "border-primary text-primary" : "border-border text-muted-foreground")} href="/auth/sign-up?type=member">Member account</Link><Link aria-current={providerAccount ? "page" : undefined} className={"rounded-full border px-4 py-3 text-center text-sm " + (providerAccount ? "border-primary text-primary" : "border-border text-muted-foreground")} href="/auth/sign-up?type=provider">Provider account</Link></div>
+          <AuthServiceStatus status={status} retry={retry} signup />
           {/* OAuth Buttons */}
           <div className="space-y-3 mb-6">
             <Button 
               variant="outline" 
               className="w-full h-12 justify-center gap-3"
+              disabled={isLoading || !status?.available || !status.google}
               onClick={() => handleOAuthLogin("google")}
             >
               <Chrome className="h-5 w-5" />
@@ -118,6 +129,7 @@ export default function SignUpPage() {
             <Button 
               variant="outline" 
               className="w-full h-12 justify-center gap-3"
+              disabled={isLoading || !status?.available || !status.apple}
               onClick={() => handleOAuthLogin("apple")}
             >
               <Apple className="h-5 w-5" />
@@ -136,17 +148,18 @@ export default function SignUpPage() {
 
           <form onSubmit={handleSignUp} className="space-y-4">
             {error && (
-              <div className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm">
+              <div role="alert" className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
+              <label htmlFor="signup-name" className="text-sm font-medium text-foreground mb-2 block">
                 Full Name
               </label>
               <div className="relative">
                 <Input
+                  id="signup-name"
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
@@ -159,11 +172,12 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
+              <label htmlFor="signup-email" className="text-sm font-medium text-foreground mb-2 block">
                 Email
               </label>
               <div className="relative">
                 <Input
+                  id="signup-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -176,11 +190,12 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
+              <label htmlFor="signup-password" className="text-sm font-medium text-foreground mb-2 block">
                 Password
               </label>
               <div className="relative">
                 <Input
+                  id="signup-password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -192,6 +207,7 @@ export default function SignUpPage() {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <button
                   type="button"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
@@ -201,12 +217,12 @@ export default function SignUpPage() {
               <p className="text-xs text-muted-foreground mt-1">Minimum 8 characters</p>
             </div>
 
-            <Button type="submit" className="w-full h-12" disabled={isLoading}>
+            <Button type="submit" className="w-full h-12" disabled={isLoading || !status?.available || !status.email || !status.signup}>
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
                 <>
-                  Create Account
+                  {providerAccount ? "Create Provider Account" : "Create Member Account"}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </>
               )}
@@ -215,14 +231,14 @@ export default function SignUpPage() {
 
           <p className="text-center text-xs text-muted-foreground mt-4">
             By creating an account, you agree to our{" "}
-            <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link>
+            <Link href="/privacy" className="text-primary hover:underline">account and data information</Link>
             {" "}and{" "}
             <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
           </p>
 
           <p className="text-center text-muted-foreground mt-6">
             Already have an account?{" "}
-            <Link href="/auth/login" className="text-primary font-medium hover:underline">
+            <Link href={loginLink} className="text-primary font-medium hover:underline">
               Sign in
             </Link>
           </p>
@@ -234,15 +250,10 @@ export default function SignUpPage() {
         <div className="max-w-md text-center text-primary-foreground">
           <h2 className="text-4xl font-bold mb-6">Start your journey today</h2>
           <p className="text-lg opacity-90 mb-8">
-            Create an account to book activities, save favorites, and manage your family&apos;s schedule all in one place.
+            {providerAccount ? "Create your provider account, verify your email and apply to join Veyra. Guests can book without an account." : "Member benefits, participating experience discounts and partner venue offers — €4.99 per month once you subscribe."}
           </p>
           <div className="space-y-4 text-left">
-            {[
-              "Discover 5,000+ activities across Ireland",
-              "Book instantly with secure payments",
-              "Manage your family's schedule easily",
-              "Get personalized recommendations"
-            ].map((feature, idx) => (
+            {(providerAccount ? ["Apply to join our Ireland provider community", "Add services after approval", "Set your own prices and sessions", "Connect Stripe to receive payouts"] : ["Member-only benefits", "Discounts on participating experiences", "Partner venue offers", "€4.99/month · manage cancellation in your account"]).map((feature, idx) => (
               <div key={idx} className="flex items-center gap-3">
                 <div className="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                   <CheckCircle2 className="h-4 w-4" />
@@ -256,3 +267,4 @@ export default function SignUpPage() {
     </div>
   )
 }
+

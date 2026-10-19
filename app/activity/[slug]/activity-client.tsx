@@ -113,7 +113,7 @@ export function ActivityClient({
             <div className="lg:col-span-2 space-y-8">
               {/* Image Gallery */}
               <div className="relative rounded-2xl overflow-hidden aspect-[16/10] bg-muted">
-                <Image
+                <Image unoptimized
                   src={images[currentImageIndex] || PLACEHOLDER}
                   alt={activity.title}
                   fill
@@ -276,7 +276,7 @@ export function ActivityClient({
                   <div className="flex items-start gap-4">
                     <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
                       {activity.provider?.logo_url ? (
-                        <Image
+                        <Image unoptimized
                           src={activity.provider.logo_url}
                           alt={activity.provider.business_name}
                           width={64}
@@ -463,7 +463,7 @@ export function ActivityClient({
                       <Link key={similar.id} href={`/activity/${similar.slug}`}>
                         <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                           <div className="aspect-video relative">
-                            <Image
+                            <Image unoptimized
                               src={similar.cover_image || similar.images?.[0] || PLACEHOLDER}
                               alt={similar.title}
                               fill

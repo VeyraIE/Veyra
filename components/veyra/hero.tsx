@@ -1,13 +1,17 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden">
+    <section className="relative isolate flex min-h-[100svh] items-center justify-center overflow-hidden">
       {/* Cinematic background */}
       <div className="absolute inset-0 -z-20">
-        <img
+        <Image
+          fill
+          priority
+          sizes="100vw"
           src="/veyra/hero.png"
           alt="A runner on a misty Irish coastal road at dawn"
           className="h-full w-full object-cover"
@@ -35,8 +39,8 @@ export function Hero() {
         </h1>
 
         <p className="mt-8 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl">
-          Find and book experiences, wellness, sport, adventure and everything
-          worth doing — all in one seamless platform.
+          Discover experiences, wellness, sport, adventure and everything
+          worth doing — with a personal team to arrange the details.
         </p>
 
         <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row">
@@ -52,7 +56,7 @@ export function Hero() {
             variant="outline"
             className="h-13 rounded-full border-border bg-card/40 px-8 text-base font-semibold backdrop-blur hover:bg-card"
           >
-            <Link href="/auth/sign-up">Join Early Access</Link>
+            <Link href="/concierge">Personal Concierge</Link>
           </Button>
         </div>
       </div>
@@ -66,3 +70,4 @@ export function Hero() {
     </section>
   )
 }
+

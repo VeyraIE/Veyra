@@ -1,7 +1,11 @@
 "use client"
 
+import { authErrorMessage } from "@/lib/auth-errors"
+import { useAuthAvailability } from "@/lib/use-auth-availability"
+import { AuthServiceStatus } from "@/components/auth/service-status"
 import { useState } from "react"
 import Link from "next/link"
+import { authDestination } from "@/lib/auth-destination"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,40 +24,39 @@ import {
 
 export default function LoginPage() {
   const router = useRouter()
+  const { status, retry } = useAuthAvailability()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (isLoading || !status?.available || !status.email) return
     setIsLoading(true)
     setError(null)
-
-    const supabase = createClient()
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (signInError) {
-      setError(signInError.message)
-      setIsLoading(false)
-      return
-    }
-
-    router.push("/dashboard")
+    try {
+      const { error: issue } = await createClient().auth.signInWithPassword({ email: email.trim(), password })
+      if (issue) throw issue
+      const requested = new URLSearchParams(window.location.search).get("redirect")
+      router.push(authDestination(requested))
+      router.refresh()
+    } catch (issue) { setError(authErrorMessage(issue)) }
+    finally { setIsLoading(false) }
   }
 
   const handleOAuthLogin = async (provider: "google" | "apple") => {
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`
-      }
-    })
+    if (isLoading || !status?.available || !status[provider]) return
+    setIsLoading(true)
+    setError(null)
+    try {
+      const callback = new URL(process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? window.location.origin + "/auth/callback")
+      callback.searchParams.set("next", authDestination(new URLSearchParams(window.location.search).get("redirect")))
+      const { error: issue } = await createClient().auth.signInWithOAuth({ provider, options: { redirectTo: callback.toString() } })
+      if (issue) throw issue
+    } catch (issue) { setError(authErrorMessage(issue)) }
+    finally { setIsLoading(false) }
   }
 
   return (
@@ -63,21 +66,23 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <Link href="/" className="flex items-center gap-2 mb-8">
             <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-              <span className="text-xl font-bold text-primary-foreground">A</span>
+              <span className="text-xl font-bold text-primary-foreground">V</span>
             </div>
-            <span className="text-xl font-bold text-foreground">Activio</span>
+            <span className="text-xl font-bold text-foreground">VEYRA</span>
           </Link>
 
           <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back</h1>
           <p className="text-muted-foreground mb-8">
-            Sign in to continue to Activio Ireland
+            Sign in to continue to Veyra
           </p>
 
+          <AuthServiceStatus status={status} retry={retry} />
           {/* OAuth Buttons */}
           <div className="space-y-3 mb-6">
             <Button 
               variant="outline" 
               className="w-full h-12 justify-center gap-3"
+              disabled={isLoading || !status?.available || !status.google}
               onClick={() => handleOAuthLogin("google")}
             >
               <Chrome className="h-5 w-5" />
@@ -86,6 +91,7 @@ export default function LoginPage() {
             <Button 
               variant="outline" 
               className="w-full h-12 justify-center gap-3"
+              disabled={isLoading || !status?.available || !status.apple}
               onClick={() => handleOAuthLogin("apple")}
             >
               <Apple className="h-5 w-5" />
@@ -104,17 +110,18 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-4">
             {error && (
-              <div className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm">
+              <div role="alert" className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
+              <label htmlFor="login-email" className="text-sm font-medium text-foreground mb-2 block">
                 Email
               </label>
               <div className="relative">
                 <Input
+                  id="login-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -128,7 +135,7 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-foreground">
+                <label htmlFor="login-password" className="text-sm font-medium text-foreground">
                   Password
                 </label>
                 <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
@@ -137,6 +144,7 @@ export default function LoginPage() {
               </div>
               <div className="relative">
                 <Input
+                  id="login-password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -147,6 +155,7 @@ export default function LoginPage() {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <button
                   type="button"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
@@ -155,7 +164,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-12" disabled={isLoading}>
+            <Button type="submit" className="w-full h-12" disabled={isLoading || !status?.available || !status.email}>
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
@@ -169,14 +178,14 @@ export default function LoginPage() {
 
           <p className="text-center text-muted-foreground mt-6">
             Don&apos;t have an account?{" "}
-            <Link href="/auth/sign-up" className="text-primary font-medium hover:underline">
+            <Link href="/auth/sign-up?type=member" className="text-primary font-medium hover:underline">
               Sign up
             </Link>
           </p>
 
           <p className="text-center text-muted-foreground mt-4">
-            <Link href="/provider/register" className="text-primary font-medium hover:underline">
-              Register as an activity provider
+            <Link href="/providers" className="text-primary font-medium hover:underline">
+              Create a provider account
             </Link>
           </p>
         </div>
@@ -185,17 +194,17 @@ export default function LoginPage() {
       {/* Right Side - Image/Branding */}
       <div className="hidden lg:flex flex-1 bg-primary items-center justify-center p-12">
         <div className="max-w-md text-center text-primary-foreground">
-          <h2 className="text-4xl font-bold mb-6">Discover amazing activities for your family</h2>
+          <h2 className="text-4xl font-bold mb-6">Extraordinary experiences start here</h2>
           <p className="text-lg opacity-90 mb-8">
-            Join thousands of Irish families finding football, swimming, dance, music, and more for their children.
+            Discover experiences, join Veyra Membership for €4.99 a month, or manage your approved provider business.
           </p>
           <div className="grid grid-cols-3 gap-4">
-            {["5,000+", "200+", "50K+"].map((stat, idx) => (
+            {["Discover", "Create", "Connect"].map((stat, idx) => (
               <Card key={idx} className="bg-white/10 border-0">
                 <CardContent className="p-4 text-center">
                   <p className="text-2xl font-bold">{stat}</p>
                   <p className="text-sm opacity-75">
-                    {idx === 0 ? "Activities" : idx === 1 ? "Providers" : "Bookings"}
+                    {idx === 0 ? "Experiences" : idx === 1 ? "Services" : "People"}
                   </p>
                 </CardContent>
               </Card>
@@ -206,3 +215,4 @@ export default function LoginPage() {
     </div>
   )
 }
+
