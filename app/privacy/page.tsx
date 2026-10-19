@@ -19,6 +19,9 @@ export default function PrivacyPage() {
     <p>Provider applications, approval decisions, service listings and booking records are stored securely through our Supabase database. Booking records include your name, email, selected session, guest count, accepted cancellation terms and payment references. We share the details needed to deliver your experience with the relevant approved provider. Veyra administrators can access records to manage approvals, payments and refunds.</p>
     <p>Stripe securely processes card payments and manages provider identity checks and payouts. Veyra does not store card numbers. We keep a secure, HTTP-only cookie in your browser to retrieve your guest booking and use a protected, hashed network identifier to limit abusive booking attempts. Account sign-in also uses essential cookies.</p>
     <p>Contact hello@veyra.ie for data rights or retention questions. Transaction records may need to be retained for accounting, refunds and dispute handling. No booking data is used to sign you up to marketing.</p>
+    <h2>Veyra membership</h2>
+    <p>Member accounts use verified sign-in. We store Stripe customer and subscription references, subscription status and paid access dates to manage the €4.99 monthly membership. Stripe handles recurring payment details and billing management. Creating an account does not start a paid subscription or grant paid member benefits.</p>
+    <p>Active paid membership is checked on the server before private offer instructions are shown or eligible booking discounts are applied. Partner venue redemption follows each published offer’s instructions. Please share only the information needed to redeem an offer. Membership does not sign you up to marketing.</p>
     <h2>Site usage</h2>
     <p>Deployed builds use Vercel Web Analytics to understand how the site is used. Please keep personal or sensitive information out of search queries and page URLs.</p>
     <h2>Questions or requests</h2>

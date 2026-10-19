@@ -20,6 +20,7 @@
     "lib/experience-edit.ts",
     "middleware.ts",
     "app/membership/**/*.tsx",
+    "app/checkout/subscription/[productId]/page.tsx",
     "app/providers/**/*.tsx",
     "app/account/**/*.tsx",
     "app/api/membership/**/*.ts",

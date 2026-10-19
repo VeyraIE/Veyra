@@ -27,7 +27,11 @@ Vercel runs the launch TypeScript check before the production build. The launch 
 - `/concierge` — personal planning
 - `/partners` — separate provider and hotel partnership funnels
 - `/request` — experience, concierge, provider and hotel enquiries
-- `/privacy` — enquiry data handling
+- `/privacy` — account, booking, membership and enquiry data handling
+- `/providers` — direct provider registration and sign-in
+- `/membership` — €4.99/month benefits, participating offers and signup
+- `/account` — verified member status, offers and billing
+- `/admin/membership` — owner-authorised member benefit/venue offer management
 
 Existing photography stays in `public/veyra`. Update the editorial collection in `lib/experience-edit.ts`. These entries are inspiration, not live inventory: the interface makes clear that providers, availability and prices must be confirmed personally.
 
@@ -46,7 +50,11 @@ See [Marketplace setup](docs/marketplace-setup.md) for staging migration, admini
 
 Providers apply using verified Supabase accounts. A trusted marketplace administrator approves them and explicitly agrees a commission percentage. Approved providers connect Stripe, add services and sessions, and publish when eligible. Payment amounts, commission and capacity are checked server-side. A booking becomes confirmed only after verification with Stripe. Full administrator refunds reverse both the provider transfer and Veyra commission. Email delivery is not implemented; confirmation pages and dashboards display booking records.
 
-The unsafe legacy booking-creation and client-priced checkout actions are disabled. Existing subscriptions and unrelated dashboards remain separate legacy features. `/provider/onboarding` now opens the provider application flow. `/pricing` still leads to partnerships.
+The unsafe legacy booking-creation and client-priced checkout actions are disabled. The legacy generic subscription action is also disabled; verified paid membership now uses `/api/membership`. Unrelated legacy dashboards remain separate. `/provider/onboarding` now opens the provider application flow. `/pricing` now leads to membership.
+
+## €4.99 member accounts
+
+See [Membership setup](docs/membership-setup.md) for the second migration, subscription/invoice webhook events, billing portal setup and paid entitlement tests. Consumer account creation is separate from provider approval and separate from paid membership. No annual price or trial is invented. Member offers must be genuine and published before paid subscriptions open; redemption instructions are restricted to paid members. Eligible experience discounts are applied server-side before provider commission.
 
 ## Preview and release
 
