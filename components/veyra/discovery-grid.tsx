@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Reveal } from '@/components/veyra/reveal'
 
 const tiles = [
@@ -31,7 +32,9 @@ export function DiscoveryGrid() {
               href={tile.href}
               className="group relative block h-72 overflow-hidden rounded-2xl border border-border sm:h-80 lg:h-96"
             >
-              <img
+              <Image
+                fill
+                sizes={tile.span ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw' : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'}
                 src={tile.image || "/placeholder.svg"}
                 alt={tile.title}
                 className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -49,3 +52,4 @@ export function DiscoveryGrid() {
     </section>
   )
 }
+

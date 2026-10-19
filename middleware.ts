@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
+  if (pathname === '/api/auth/status' || ['/auth/login', '/auth/sign-up', '/auth/error', '/auth/callback', '/auth/sign-up-success'].includes(pathname)) return NextResponse.next()
   if (pathname === '/api/marketplace/checkout' || pathname === '/api/marketplace/status' || pathname === '/api/stripe/webhook' || pathname === '/api/marketplace/reconcile') return NextResponse.next()
   if (pathname === '/book' || pathname.startsWith('/book/')) {
     const response = NextResponse.next()

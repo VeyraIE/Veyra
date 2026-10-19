@@ -1,5 +1,8 @@
 "use client"
 
+import { authErrorMessage } from "@/lib/auth-errors"
+import { useAuthAvailability } from "@/lib/use-auth-availability"
+import { AuthServiceStatus } from "@/components/auth/service-status"
 import { Suspense, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -25,6 +28,7 @@ export default function SignUpPage() {
 }
 
 function SignUpForm() {
+  const { status, retry } = useAuthAvailability()
   const searchParams = useSearchParams()
   const providerAccount = searchParams.get("type") === "provider"
   const destination = providerAccount ? "/provider/dashboard" : "/account"
@@ -43,42 +47,33 @@ function SignUpForm() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSignUp = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (isLoading || !status?.available || !status.email || !status.signup) return
     setIsLoading(true)
     setError(null)
-
-    const supabase = createClient()
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: callbackUrl(),
-        data: {
-          full_name: fullName,
-          role: "user"
-        }
-      }
-    })
-
-    if (signUpError) {
-      setError(signUpError.message)
-      setIsLoading(false)
-      return
-    }
-
-    setSuccess(true)
-    setIsLoading(false)
+    try {
+      const supabase = createClient()
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(), password,
+        options: { emailRedirectTo: callbackUrl(), data: { full_name: fullName.trim(), role: "user" } }
+      })
+      if (signUpError) throw signUpError
+      if (data.session) { router.push(destination); router.refresh() }
+      else setSuccess(true)
+    } catch (issue) { setError(authErrorMessage(issue)) }
+    finally { setIsLoading(false) }
   }
 
   const handleOAuthLogin = async (provider: "google" | "apple") => {
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: callbackUrl()
-      }
-    })
+    if (isLoading || !status?.available || !status[provider]) return
+    setIsLoading(true)
+    setError(null)
+    try {
+      const { error: issue } = await createClient().auth.signInWithOAuth({ provider, options: { redirectTo: callbackUrl() } })
+      if (issue) throw issue
+    } catch (issue) { setError(authErrorMessage(issue)) }
+    finally { setIsLoading(false) }
   }
 
   if (success) {
@@ -119,11 +114,13 @@ function SignUpForm() {
           </p>
 
           <div className="mb-6 grid grid-cols-2 gap-2" aria-label="Account type"><Link aria-current={!providerAccount ? "page" : undefined} className={"rounded-full border px-4 py-3 text-center text-sm " + (!providerAccount ? "border-primary text-primary" : "border-border text-muted-foreground")} href="/auth/sign-up?type=member">Member account</Link><Link aria-current={providerAccount ? "page" : undefined} className={"rounded-full border px-4 py-3 text-center text-sm " + (providerAccount ? "border-primary text-primary" : "border-border text-muted-foreground")} href="/auth/sign-up?type=provider">Provider account</Link></div>
+          <AuthServiceStatus status={status} retry={retry} signup />
           {/* OAuth Buttons */}
           <div className="space-y-3 mb-6">
             <Button 
               variant="outline" 
               className="w-full h-12 justify-center gap-3"
+              disabled={isLoading || !status?.available || !status.google}
               onClick={() => handleOAuthLogin("google")}
             >
               <Chrome className="h-5 w-5" />
@@ -132,6 +129,7 @@ function SignUpForm() {
             <Button 
               variant="outline" 
               className="w-full h-12 justify-center gap-3"
+              disabled={isLoading || !status?.available || !status.apple}
               onClick={() => handleOAuthLogin("apple")}
             >
               <Apple className="h-5 w-5" />
@@ -150,7 +148,7 @@ function SignUpForm() {
 
           <form onSubmit={handleSignUp} className="space-y-4">
             {error && (
-              <div className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm">
+              <div role="alert" className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm">
                 {error}
               </div>
             )}
@@ -219,7 +217,7 @@ function SignUpForm() {
               <p className="text-xs text-muted-foreground mt-1">Minimum 8 characters</p>
             </div>
 
-            <Button type="submit" className="w-full h-12" disabled={isLoading}>
+            <Button type="submit" className="w-full h-12" disabled={isLoading || !status?.available || !status.email || !status.signup}>
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (

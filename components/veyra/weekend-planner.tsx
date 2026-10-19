@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight, MapPin, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Reveal } from '@/components/veyra/reveal'
@@ -73,7 +74,7 @@ export function WeekendPlanner() {
           <div className="flex flex-col">
             <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground"><Sparkles className="h-4 w-4 text-primary" /> Experience inspiration</div>
             <div className="relative flex-1 overflow-hidden rounded-2xl border border-border" aria-live="polite">
-              <img src={editImage(preview?.image ?? 'hero')} alt={preview?.title ?? 'The Irish coast'} className="absolute inset-0 h-full w-full object-cover" />
+              <Image fill sizes="(max-width: 1024px) 100vw, 50vw" src={editImage(preview?.image ?? 'hero')} alt={preview?.title ?? 'The Irish coast'} className="absolute inset-0 h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
               <div className="relative flex h-full min-h-72 flex-col justify-end p-6">
                 <span className="mb-2 inline-flex w-fit rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">Personally arranged</span>
@@ -89,3 +90,4 @@ export function WeekendPlanner() {
     </section>
   )
 }
+

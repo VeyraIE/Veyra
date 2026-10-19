@@ -6,6 +6,7 @@
   "include": [
     "next-env.d.ts",
     "app/layout.tsx",
+    "app/loading.tsx",
     "app/page.tsx",
     "app/discover/page.tsx",
     "app/concierge/page.tsx",
@@ -19,6 +20,10 @@
     "components/veyra/request-form.tsx",
     "lib/experience-edit.ts",
     "middleware.ts",
+    "app/api/auth/**/*.ts",
+    "lib/auth-errors.ts",
+    "lib/use-auth-availability.ts",
+    "components/auth/**/*.tsx",
     "app/membership/**/*.tsx",
     "app/checkout/subscription/[productId]/page.tsx",
     "app/providers/**/*.tsx",

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { MapPin, ArrowUpRight } from 'lucide-react'
 import { Reveal } from '@/components/veyra/reveal'
 
@@ -37,7 +38,9 @@ export function FeaturedExperiences() {
               className="group relative grid overflow-hidden rounded-3xl border border-border bg-card transition-colors duration-500 hover:border-primary/30 md:grid-cols-[1.1fr_1fr]"
             >
               <div className="relative h-64 overflow-hidden md:h-80">
-                <img
+                <Image
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   src={exp.image || "/placeholder.svg"}
                   alt={exp.title}
                   className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -70,3 +73,4 @@ export function FeaturedExperiences() {
     </section>
   )
 }
+

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -7,7 +8,10 @@ export function Hero() {
     <section className="relative isolate flex min-h-[100svh] items-center justify-center overflow-hidden">
       {/* Cinematic background */}
       <div className="absolute inset-0 -z-20">
-        <img
+        <Image
+          fill
+          priority
+          sizes="100vw"
           src="/veyra/hero.png"
           alt="A runner on a misty Irish coastal road at dawn"
           className="h-full w-full object-cover"
@@ -66,3 +70,4 @@ export function Hero() {
     </section>
   )
 }
+

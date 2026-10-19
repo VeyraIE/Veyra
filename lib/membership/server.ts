@@ -14,7 +14,7 @@ export function membershipActive(membership: Membership | null) {
 export async function memberOffers(privateDetails = false): Promise<MemberOffer[]> {
   try {
     const columns = 'id,title,description,kind,venue,county,ends_at,discount_bps,offer_id' + (privateDetails ? ',redemption_instructions' : '')
-    const { data, error } = await marketplaceDatabase().from('veyra_member_offers').select(columns).eq('active', true).gt('ends_at', new Date().toISOString()).order('created_at', { ascending: false })
+    const { data, error } = await marketplaceDatabase().from('veyra_member_offers').select(columns).eq('active', true).gt('ends_at', new Date().toISOString()).order('created_at', { ascending: false }).abortSignal(AbortSignal.timeout(3500))
     if (error) return []
     return data as unknown as MemberOffer[]
   } catch { return [] }

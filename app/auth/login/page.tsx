@@ -1,5 +1,8 @@
 "use client"
 
+import { authErrorMessage } from "@/lib/auth-errors"
+import { useAuthAvailability } from "@/lib/use-auth-availability"
+import { AuthServiceStatus } from "@/components/auth/service-status"
 import { useState } from "react"
 import Link from "next/link"
 import { authDestination } from "@/lib/auth-destination"
@@ -21,43 +24,39 @@ import {
 
 export default function LoginPage() {
   const router = useRouter()
+  const { status, retry } = useAuthAvailability()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (isLoading || !status?.available || !status.email) return
     setIsLoading(true)
     setError(null)
-
-    const supabase = createClient()
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (signInError) {
-      setError(signInError.message)
-      setIsLoading(false)
-      return
-    }
-
-    const requested = new URLSearchParams(window.location.search).get("redirect")
-    router.push(authDestination(requested))
+    try {
+      const { error: issue } = await createClient().auth.signInWithPassword({ email: email.trim(), password })
+      if (issue) throw issue
+      const requested = new URLSearchParams(window.location.search).get("redirect")
+      router.push(authDestination(requested))
+      router.refresh()
+    } catch (issue) { setError(authErrorMessage(issue)) }
+    finally { setIsLoading(false) }
   }
 
   const handleOAuthLogin = async (provider: "google" | "apple") => {
-    const supabase = createClient()
-    const callback = new URL(process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`)
-    callback.searchParams.set("next", authDestination(new URLSearchParams(window.location.search).get("redirect")))
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: callback.toString()
-      }
-    })
+    if (isLoading || !status?.available || !status[provider]) return
+    setIsLoading(true)
+    setError(null)
+    try {
+      const callback = new URL(process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? window.location.origin + "/auth/callback")
+      callback.searchParams.set("next", authDestination(new URLSearchParams(window.location.search).get("redirect")))
+      const { error: issue } = await createClient().auth.signInWithOAuth({ provider, options: { redirectTo: callback.toString() } })
+      if (issue) throw issue
+    } catch (issue) { setError(authErrorMessage(issue)) }
+    finally { setIsLoading(false) }
   }
 
   return (
@@ -77,11 +76,13 @@ export default function LoginPage() {
             Sign in to continue to Veyra
           </p>
 
+          <AuthServiceStatus status={status} retry={retry} />
           {/* OAuth Buttons */}
           <div className="space-y-3 mb-6">
             <Button 
               variant="outline" 
               className="w-full h-12 justify-center gap-3"
+              disabled={isLoading || !status?.available || !status.google}
               onClick={() => handleOAuthLogin("google")}
             >
               <Chrome className="h-5 w-5" />
@@ -90,6 +91,7 @@ export default function LoginPage() {
             <Button 
               variant="outline" 
               className="w-full h-12 justify-center gap-3"
+              disabled={isLoading || !status?.available || !status.apple}
               onClick={() => handleOAuthLogin("apple")}
             >
               <Apple className="h-5 w-5" />
@@ -108,7 +110,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-4">
             {error && (
-              <div className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm">
+              <div role="alert" className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm">
                 {error}
               </div>
             )}
@@ -162,7 +164,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-12" disabled={isLoading}>
+            <Button type="submit" className="w-full h-12" disabled={isLoading || !status?.available || !status.email}>
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
